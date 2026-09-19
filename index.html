@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Onboarding — Phòng HCQT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#B041FF"/><stop offset="100%" stop-color="#00A693"/></linearGradient>
+</defs></svg>
+
+<header class="top"><div class="top-in">
+  <div class="logo">
+    <img id="xpLogo" alt="Phòng HCQT">
+  </div>
+  <div class="top-client">
+    <span class="xsign">×</span>
+    <img class="cl-logo" id="clLogo" alt="Nam Á Bank">
+    <input type="text" data-k="client" value="Nam Á Bank" aria-label="Tên khách hàng" title="Tên khách hàng / đối tác">
+  </div>
+  <div class="top-acts">
+    <span class="save-badge" id="saveBadge">✓ Tự động lưu</span>
+    <span class="chip chip-live" id="chipLive">Go-live —</span>
+    <button class="btn btn-o btn-s" id="save" title="Lưu toàn bộ ứng dụng và dữ liệu ra file HTML">Lưu HTML</button>
+    <button class="btn btn-o btn-s" id="load" title="Mở file HTML hoặc dữ liệu đã lưu">Mở HTML</button>
+    <button class="btn btn-o btn-s" id="printBtn" title="In hoặc lưu dạng PDF">In / PDF</button>
+    <input type="file" id="file" accept=".html,.htm,.json" hidden>
+  </div>
+</div></header>
+
+<div class="tabs"><div class="tabs-in" id="tabs"></div></div>
+
+<main>
+
+<!-- ===== 1. TỔNG QUAN ===== -->
+<section class="panel on" id="p1">
+  <div class="hero">
+    <div class="blob b1"></div><div class="blob b2"></div>
+    <div class="hero-in">
+      <div class="hero-main">
+        <span class="eyebrow">Giai đoạn thiết lập hệ thống</span>
+        <h1>Lộ trình triển khai đến ngày <em class="hl">vận hành chính thức</em></h1>
+        <p class="lede" id="statusLine">Vui lòng xác nhận ngày vận hành chính thức mục tiêu để bắt đầu theo dõi tiến độ.</p>
+      </div>
+      <div class="golive">
+        <div class="lb">Go-live mục tiêu</div>
+        <div class="dt" id="gvDate">Chưa đặt</div>
+        <div class="cd" id="gvCount">—</div>
+        <input type="date" data-k="golive" id="gvInput" value="2026-09-28" aria-label="Ngày Go-live">
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g4" style="margin-bottom:18px">
+    <div class="stat"><div class="k">Tiến độ</div>
+      <div class="ringwrap">
+        <svg class="ring" viewBox="0 0 80 80"><circle class="bgc" cx="40" cy="40" r="33"/>
+        <circle class="fg" id="ringFg" cx="40" cy="40" r="33" transform="rotate(-90 40 40)"/></svg>
+        <div><div class="n" id="ovPct">0%</div><div class="s" id="ovCnt">0 / 0 việc</div></div>
+      </div></div>
+    <div class="stat"><div class="k">Quá hạn</div><div class="v" id="stLate">0</div><div class="m">hạng mục cần xử lý ngay</div></div>
+    <div class="stat"><div class="k" id="stClTitle">Chờ đối tác xử lý</div><div class="v" id="stCl">0</div><div class="m" id="stClDept">—</div></div>
+    <div class="stat"><div class="k">Tài liệu chưa nhận</div><div class="v" id="stDoc">0</div><div class="m">trên tổng số cần cung cấp</div></div>
+  </div>
+
+  <div class="cal" style="margin-bottom:18px">
+    <div class="cal-top">
+      <h4 id="calTitle">—</h4>
+      <div class="cal-nav">
+        <button type="button" id="calPrev" aria-label="Tháng trước">‹</button>
+        <button type="button" id="calToday" style="width:auto;padding:0 12px;font-size:12px">Hôm nay</button>
+        <button type="button" id="calNext" aria-label="Tháng sau">›</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-list" id="calList"></div>
+    <div class="cal-legend">
+      <span><i class="lg-live"></i>Go-live</span>
+      <span><i class="lg-ms"></i>Mốc quan trọng</span>
+      <span><i class="lg-xp"></i>Phòng HCQT thực hiện</span>
+      <span><i class="lg-cl"></i>Đối tác thực hiện</span>
+      <span><i class="lg-late"></i>Quá hạn</span>
+    </div>
+  </div>
+
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <h4 style="font-family:var(--font-d);font-size:18px;margin-bottom:12px">Tiến độ theo giai đoạn</h4>
+      <div id="phases"></div>
+    </div>
+    <div class="card">
+      <h4 style="font-family:var(--font-d);font-size:18px;margin-bottom:4px">Hạng mục chờ xử lý</h4>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px">Các hạng mục đến hạn gần nhất, phân theo đơn vị chịu trách nhiệm.</p>
+      <div id="byDept"></div>
+    </div>
+  </div>
+
+  <h3 class="sec">Hạng mục đến hạn</h3>
+  <div id="nextUp" class="tasklist"></div>
+</section>
+
+<!-- ===== 2. KẾ HOẠCH ===== -->
+<section class="panel" id="p2">
+  <div class="phead">
+    <h2>Kế hoạch triển khai</h2>
+    <p>Danh mục công việc theo trình tự thực hiện. Thứ tự, đơn vị phụ trách và thời hạn có thể điều chỉnh trực tiếp. Hạng mục đánh dấu sao sẽ hiển thị như mốc quan trọng trên lịch tại mục Tổng quan.</p>
+  </div>
+  <div class="flow">
+    <div class="flow-head">
+      <h3>Sơ đồ phối hợp</h3>
+      <p>Mỗi hàng là một đơn vị, mỗi cột là một giai đoạn, số thứ tự trùng với danh mục bên dưới. Chọn tên đơn vị để xem riêng phần việc cần làm; chọn một bước để mở chi tiết.</p>
+    </div>
+    <div class="fl-units" id="flUnits" role="group" aria-label="Lọc theo đơn vị"></div>
+    <div class="fl-wrap"><div class="fl-grid" id="flGrid"></div></div>
+    <div class="fl-legend">
+      <span><span class="fl-n">1</span>Bước theo trình tự</span>
+      <span><span class="fl-n" style="background:var(--gradient)">1</span>Mốc quan trọng</span>
+      <span><span class="fl-n" style="background:var(--green)">✓</span>Hoàn thành</span>
+      <span><i class="lg-box lg-dash"></i>Phòng HCQT phối hợp cùng phòng ban đối tác</span>
+      <span><i class="lg-box lg-late2"></i>Quá hạn</span>
+    </div>
+    <div class="fl-todo" id="flTodo" hidden></div>
+  </div>
+
+  <h3 class="sec" style="margin-top:0">Danh mục công việc</h3>
+  <div class="acts" style="margin:0 0 18px">
+    <button class="btn btn-p" id="addTask">+ Thêm hạng mục</button>
+    <button class="btn btn-o" id="resetTask">Khôi phục danh sách gốc</button>
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="taskSearch" placeholder="Tìm kiếm công việc, PIC...">
+    </div>
+    <select id="filt" class="btn btn-o" style="padding:8px 16px;cursor:pointer">
+      <option value="">Tất cả giai đoạn</option>
+    </select>
+  </div>
+  <div id="plan" class="tasklist"></div>
+</section>
+
+<!-- ===== 3. DỮ LIỆU & CHÍNH SÁCH ===== -->
+<section class="panel" id="p3">
+  <div class="phead">
+    <h2>Dữ liệu &amp; chính sách khởi tạo</h2>
+    <p>Toàn bộ dữ liệu cấu hình được tập hợp trong một biểu mẫu duy nhất. Đối tác có thể kê khai trực tiếp trên trang này, hoặc tải biểu mẫu về hoàn thiện và gửi lại qua đầu mối dự án.</p>
+  </div>
+  <div id="formDoc" style="margin-bottom:24px"></div>
+
+  <h3 class="sec">Các nhóm dữ liệu cần cung cấp</h3>
+  <div class="tw"><table id="groups"><thead><tr>
+    <th class="mid" style="width:44px">✓</th><th style="min-width:200px">Nhóm dữ liệu</th>
+    <th style="min-width:300px">Nội dung</th><th style="width:130px">Phòng ban</th><th style="width:140px">Hạn</th>
+  </tr></thead><tbody></tbody></table></div>
+
+  <h3 class="sec">Định mức lưu trú</h3>
+  <p style="font-size:14px;color:var(--gray-500);margin-bottom:12px">Định mức chi tối đa cho một đêm phòng, đơn vị tính: nghìn đồng.</p>
+  <div class="tw"><table><thead><tr><th style="min-width:230px">Cấp bậc</th>
+    <th class="mid" style="width:120px">Nhóm A</th><th class="mid" style="width:120px">Nhóm B</th>
+    <th class="mid" style="width:120px">Nhóm C</th><th class="mid" style="width:120px">Nhóm D</th>
+  </tr></thead><tbody id="mxHotel"></tbody></table></div>
+  <h4 class="sub">Nhóm địa điểm</h4>
+  <div class="tw"><table><thead><tr><th style="width:120px">Nhóm</th><th>Tỉnh thành thuộc nhóm</th></tr></thead>
+    <tbody id="mxLoc"></tbody></table></div>
+
+  <h3 class="sec">Chính sách vé máy bay</h3>
+  <div class="tw"><table><thead><tr>
+    <th style="min-width:230px" rowspan="2">Cấp bậc</th>
+    <th class="mid" colspan="2">Nội địa</th><th class="mid" colspan="2">Quốc tế</th></tr>
+    <tr><th class="mid" style="width:145px">Hạng vé</th><th class="mid" style="width:130px">Ngân sách</th>
+    <th class="mid" style="width:145px">Hạng vé</th><th class="mid" style="width:130px">Ngân sách</th></tr></thead>
+    <tbody id="mxFlight"></tbody></table></div>
+
+  <h3 class="sec">Luồng phê duyệt</h3>
+  <div class="tw"><table><thead><tr>
+    <th style="min-width:190px">Áp dụng cho</th><th style="min-width:150px">Cấp 1</th>
+    <th style="min-width:150px">Cấp 2</th><th style="min-width:150px">Cấp 3</th><th style="min-width:150px">Ngưỡng</th>
+  </tr></thead><tbody id="mxAppr"></tbody></table></div>
+  <div class="acts"><button class="btn btn-o" id="addAppr">+ Thêm dòng</button></div>
+
+  <h3 class="sec">Các nội dung quyết định cấu hình hệ thống</h3>
+  <div class="tw"><table><thead><tr><th style="min-width:210px">Nội dung</th>
+    <th style="min-width:320px">Các phương án áp dụng</th><th style="min-width:180px">Lựa chọn áp dụng</th></tr></thead><tbody>
+    <tr><td><b>Xử lý giao dịch vượt định mức</b></td><td>Không cho phép giao dịch · Cho phép kèm một cấp phê duyệt bổ sung · Cho phép và ghi nhận cảnh báo</td><td><input type="text" data-k="q1" placeholder="Phương án lựa chọn"></td></tr>
+    <tr><td><b>Căn cứ tính định mức</b></td><td>Giá đã bao gồm thuế và phí · Giá chưa bao gồm thuế và phí</td><td><input type="text" data-k="q2" placeholder="Phương án lựa chọn"></td></tr>
+    <tr><td><b>Đặt dịch vụ thay cho người khác</b></td><td>Áp dụng toàn hàng · Giới hạn trong phạm vi đơn vị · Không áp dụng</td><td><input type="text" data-k="q3" placeholder="Phương án lựa chọn"></td></tr>
+    <tr><td><b>Xử lý khi người phê duyệt vắng mặt</b></td><td>Chỉ định người phê duyệt thay thế · Tự động chuyển cấp trên · Chờ người phê duyệt chính</td><td><input type="text" data-k="q4" placeholder="Phương án lựa chọn"></td></tr>
+  </tbody></table></div>
+
+  <h3 class="sec">Phòng ban phụ trách</h3>
+  <div class="tw"><table><thead><tr><th style="width:140px">Phòng ban</th>
+    <th style="min-width:320px">Phụ trách phần nào</th><th style="min-width:180px">Đầu mối</th></tr></thead><tbody>
+    <tr><td><b>Hành chính</b></td><td>Chính sách công tác: định mức lưu trú, chính sách vé máy bay và phân nhóm địa điểm.</td><td><input type="text" data-k="pic-hc" placeholder="Tên, email"></td></tr>
+    <tr><td><b>Nhân sự</b></td><td>Danh sách người dùng và luồng phê duyệt theo cấp bậc, phòng ban.</td><td><input type="text" data-k="pic-ns" placeholder="Tên, email"></td></tr>
+    <tr><td><b>Kế toán</b></td><td>Cost center, thông tin xuất hoá đơn, đầu mối đối soát bảng kê.</td><td><input type="text" data-k="pic-kt" placeholder="Tên, email"></td></tr>
+    <tr><td><b>Tài chính</b></td><td>Hạn mức chi tiêu theo tháng, ngưỡng cảnh báo công nợ, chu kỳ thanh toán.</td><td><input type="text" data-k="pic-tc" placeholder="Tên, email"></td></tr>
+  </tbody></table></div>
+</section>
+
+<!-- ===== 4. QUY TRÌNH HOÁ ĐƠN ===== -->
+<section class="panel" id="p4">
+  <div class="phead"><h2>Quy trình xuất hoá đơn</h2>
+    <p>Dịch vụ lưu trú và dịch vụ hàng không có thời điểm xuất hoá đơn khác nhau. Đây là nguyên nhân phát sinh chênh lệch số liệu phổ biến nhất trong quá trình đối soát.</p></div>
+  <div class="note key"><b>Nguyên tắc:</b> hoá đơn xuất tại thời điểm dịch vụ hoàn thành, không phải thời điểm đặt và cũng không phải thời điểm thanh toán.</div>
+  <div class="grid g2">
+    <div class="card"><span class="pill p-ph">Lưu trú</span>
+      <h3 style="font-size:22px;margin:12px 0 7px">Theo ngày trả phòng</h3>
+      <p style="font-size:14px;color:var(--gray-500)">Dịch vụ lưu trú được xác định hoàn thành tại thời điểm trả phòng. Trước thời điểm này, số đêm lưu trú và giá trị dịch vụ chưa được xác định cuối cùng nên chưa đủ căn cứ xuất hoá đơn.</p></div>
+    <div class="card"><span class="pill p-cl">Vé máy bay</span>
+      <h3 style="font-size:22px;margin:12px 0 7px">T+1 sau ngày xuất vé</h3>
+      <p style="font-size:14px;color:var(--gray-500)">Vé đã xuất là chứng từ có giá trị sử dụng, nghĩa vụ thanh toán với hãng hàng không phát sinh ngay tại thời điểm xuất vé. Hoá đơn được phát hành vào ngày làm việc kế tiếp, không phụ thuộc vào ngày khởi hành.</p></div>
+  </div>
+
+  <h3 class="sec">Giao dịch phát sinh giữa hai kỳ</h3>
+  <div class="tw"><table><thead><tr><th style="width:120px">Dịch vụ</th><th style="min-width:200px">Tình huống phát sinh</th>
+    <th style="width:140px">Thuộc kỳ</th><th style="min-width:230px">Căn cứ</th></tr></thead><tbody>
+    <tr><td><span class="pill p-ph">Lưu trú</span></td><td>Nhận phòng 12/9, trả phòng 16/9</td><td><b>Kỳ 2 tháng 9</b></td><td>Ghi nhận theo ngày trả phòng 16/9, mặc dù nhận phòng từ kỳ 1.</td></tr>
+    <tr><td><span class="pill p-ph">Lưu trú</span></td><td>Nhận phòng 28/9, trả phòng 02/10</td><td><b>Kỳ 1 tháng 10</b></td><td>Ngày trả phòng thuộc tháng 10 nên toàn bộ giao dịch được ghi nhận vào tháng 10.</td></tr>
+    <tr><td><span class="pill p-cl">Vé máy bay</span></td><td>Xuất vé 13/9, bay 20/10</td><td><b>Kỳ 1 tháng 9</b></td><td>Hoá đơn phát hành ngày 14/9 theo nguyên tắc T+1, không phụ thuộc ngày khởi hành.</td></tr>
+    <tr><td><span class="pill p-cl">Vé máy bay</span></td><td>Xuất vé 14/9</td><td><b>Kỳ 2 tháng 9</b></td><td>Hoá đơn phát hành ngày 15/9 nên được ghi nhận vào kỳ kế tiếp. Đề nghị lưu ý nội dung này khi đối soát các giao dịch cuối kỳ 1.</td></tr>
+  </tbody></table></div>
+  <div class="note">Mỗi giao dịch được ghi nhận trọn vẹn vào một kỳ duy nhất, không phân bổ số đêm lưu trú theo kỳ, nhằm bảo đảm hoá đơn đối chiếu được với một mã đặt dịch vụ duy nhất.</div>
+
+  <h3 class="sec">Hoàn, huỷ và đổi</h3>
+  <div class="note">Chính sách hoàn, huỷ và đổi dịch vụ sẽ được bổ sung sau khi hai bên thống nhất.</div>
+
+  <div class="note warn">Nội dung cần thống nhất: các chi phí cá nhân phát sinh tại cơ sở lưu trú (minibar, giặt là, dịch vụ ngoài phòng) do người sử dụng dịch vụ thanh toán trực tiếp, hay do Phòng HCQT thanh toán và xuất hoá đơn để đối tác hoàn ứng theo quy định nội bộ.</div>
+</section>
+
+<!-- ===== 5. ĐỐI SOÁT & THANH TOÁN ===== -->
+<section class="panel" id="p5">
+  <div class="phead"><h2>Đối soát &amp; thanh toán</h2>
+    <p>Lịch chốt kỳ đối soát, biểu mẫu bảng kê và cơ chế kiểm soát hạn mức công nợ.</p></div>
+
+  <h3 class="sec">Lịch chốt kỳ đối soát</h3>
+  <div class="grid g2">
+    <div class="card"><span class="eyebrow" style="background:rgba(176,65,255,.08);color:var(--purple-dark)">Kỳ 1</span>
+      <p style="font-size:14px;color:var(--gray-500);margin-bottom:14px">Giao dịch ngày 01 – 14</p>
+      <div id="cyc1"></div></div>
+    <div class="card"><span class="eyebrow">Kỳ 2</span>
+      <p style="font-size:14px;color:var(--gray-500);margin-bottom:14px">Giao dịch ngày 15 – cuối tháng</p>
+      <div id="cyc2"></div></div>
+  </div>
+
+  <div class="note key"><b>Nguyên tắc xác nhận mặc định:</b> Trường hợp Phòng HCQT không nhận được phản hồi trong vòng 03 ngày làm việc kể từ ngày gửi, hồ sơ thanh toán được xem là đã được đối tác chấp thuận và Phòng HCQT tiến hành phát hành hoá đơn. Khách hàng thực hiện thanh toán trong vòng 07 ngày kể từ ngày nhận hoá đơn hợp lệ.</div>
+
+  <h3 class="sec">Mẫu bảng kê</h3>
+  <div id="stmtDoc"></div>
+
+  <h4 class="sub">Yêu cầu riêng đối với bảng kê</h4>
+  <div class="tw"><table id="req"><thead><tr><th class="mid" style="width:44px">#</th>
+    <th style="min-width:220px">Nội dung yêu cầu</th><th style="width:130px">Người nêu</th>
+    <th style="width:140px">Mức độ</th><th style="min-width:200px">Phản hồi của Phòng HCQT</th>
+    <th style="width:44px"></th></tr></thead><tbody></tbody></table></div>
+  <div class="acts"><button class="btn btn-o" id="addReq">+ Thêm yêu cầu</button></div>
+
+  <h3 class="sec">Hạn mức công nợ</h3>
+  <div class="grid g3">
+    <div class="stat"><div class="k">Hạn mức được cấp</div><div class="v">1,2 tỷ <small>đ/tháng</small></div></div>
+    <div class="stat"><div class="k">Tần suất giải toả</div><div class="v">2 lần <small>theo kỳ thanh toán</small></div></div>
+    <div class="stat"><div class="k">Điều chỉnh hạn mức</div><div class="v" style="font-size:19px">Theo yêu cầu</div><div class="m">theo đề nghị của đối tác</div></div>
+  </div>
+  <div class="tw" style="margin-top:16px"><table><thead><tr><th class="mid" style="width:110px">Tỷ lệ sử dụng</th>
+    <th style="width:130px">Tương ứng</th><th style="min-width:300px">Biện pháp xử lý</th></tr></thead><tbody>
+    <tr><td class="mid"><b>70%</b></td><td>840 triệu</td><td>Phòng HCQT thông báo tới bộ phận Kế toán và Tài chính để theo dõi.</td></tr>
+    <tr><td class="mid"><b>85%</b></td><td>1,02 tỷ</td><td>Phòng HCQT đề nghị đối tác thanh toán sớm kỳ hiện hành hoặc gửi đề nghị nâng hạn mức.</td></tr>
+    <tr><td class="mid"><b>95%</b></td><td>1,14 tỷ</td><td>Cảnh báo tới cả hai bên và chuẩn bị phương án bảo đảm không gián đoạn dịch vụ.</td></tr>
+    <tr><td class="mid"><b>100%</b></td><td>1,2 tỷ</td><td>Hệ thống tạm dừng tiếp nhận giao dịch mới cho đến khi hạn mức được giải toả.</td></tr>
+  </tbody></table></div>
+</section>
+
+<!-- ===== 6. KHÁCH SẠN ===== -->
+<section class="panel" id="p6">
+  <div class="phead"><h2>Cơ sở lưu trú &amp; giá thoả thuận</h2>
+    <p>Đối tác giữ nguyên mức giá đã đàm phán với cơ sở lưu trú, đồng thời chuyển đầu mối làm việc trực tiếp sang Phòng HCQT.</p></div>
+  <div class="grid g2">
+    <div class="card"><h3 style="font-size:19px;margin-bottom:11px">1. Cung cấp danh sách cơ sở lưu trú</h3>
+      <ul class="cl" style="color:var(--gray-500)">
+        <li>Tên cơ sở lưu trú và địa bàn</li><li>Mã khách hàng tại cơ sở lưu trú (nếu có)</li>
+        <li>Mức giá theo hạng phòng và thời hạn hiệu lực</li><li>Điều kiện kèm theo: bữa sáng, chính sách huỷ</li></ul></div>
+    <div class="card"><h3 style="font-size:19px;margin-bottom:11px">2. Phát hành thư giới thiệu</h3>
+      <ul class="cl" style="color:var(--gray-500)">
+        <li>Xác nhận Phòng HCQT được uỷ quyền đặt phòng và thanh toán</li>
+        <li>Đề nghị áp dụng mức giá đã thoả thuận cho các giao dịch do Phòng HCQT thực hiện</li>
+        <li>Thông tin liên hệ của Phòng HCQT để cơ sở lưu trú cập nhật hồ sơ</li><li>Thời điểm bắt đầu áp dụng</li></ul></div>
+  </div>
+  <div class="note">Phòng HCQT chuẩn bị bản dự thảo thư giới thiệu để đối tác rà soát và phát hành.</div>
+
+  <h3 class="sec">So sánh khi có và chưa có thư giới thiệu</h3>
+  <div class="tw"><table><thead><tr><th style="width:160px">Nội dung</th>
+    <th style="min-width:230px">Chưa phát hành thư</th><th style="min-width:230px">Đã phát hành thư</th></tr></thead><tbody>
+    <tr><td>Giá áp dụng</td><td>Cơ sở lưu trú áp dụng giá công bố.</td><td>Áp dụng đúng mức giá đã thoả thuận.</td></tr>
+    <tr><td>Xác nhận đặt phòng</td><td>Mỗi giao dịch cần đối tác xác nhận.</td><td>Phòng HCQT đặt trực tiếp.</td></tr>
+    <tr><td>Thanh toán</td><td>Người sử dụng dịch vụ có thể phải tự ứng trước chi phí.</td><td>Phòng HCQT thanh toán trực tiếp với cơ sở lưu trú.</td></tr>
+  </tbody></table></div>
+
+  <h3 class="sec">Danh sách cơ sở lưu trú</h3>
+  <div class="tw"><table id="hotels"><thead><tr><th class="mid" style="width:44px">#</th>
+    <th style="min-width:190px">Cơ sở lưu trú</th><th style="width:140px">Thành phố</th>
+    <th style="width:140px">Có hợp đồng giá</th><th style="min-width:160px">Ghi chú</th>
+    <th style="width:145px">Thư giới thiệu</th><th style="width:44px"></th></tr></thead><tbody></tbody></table></div>
+  <div class="acts"><button class="btn btn-o" id="addHotel">+ Thêm cơ sở lưu trú</button></div>
+</section>
+
+<!-- ===== 7. TÀI LIỆU ===== -->
+<section class="panel" id="p7">
+  <div class="phead"><h2>Tài liệu</h2>
+    <p>Biểu mẫu do Phòng HCQT cung cấp và hồ sơ cần tiếp nhận từ đối tác. Trạng thái được cập nhật theo tiến độ gửi và nhận.</p></div>
+  <h4 class="sub">Phòng HCQT cung cấp</h4>
+  <div class="grid" id="docsXp" style="gap:13px"></div>
+  <h4 class="sub">Đối tác cung cấp</h4>
+  <div class="grid" id="docsCl" style="gap:13px"></div>
+
+  <h3 class="sec">Giải đáp nghiệp vụ</h3>
+  <details class="faq"><summary>Giao dịch đặt phòng phát sinh trong tháng này nhưng thực hiện công tác vào tháng sau được ghi nhận vào kỳ nào?</summary><div class="b">Giao dịch được ghi nhận vào kỳ có ngày trả phòng. Việc đặt phòng chỉ là giữ chỗ, chưa làm phát sinh chi phí.</div></details>
+  <details class="faq"><summary>Vé máy bay xuất trước ngày khởi hành nhiều tháng được ghi nhận vào thời điểm nào?</summary><div class="b">Hoá đơn được phát hành vào ngày làm việc kế tiếp sau ngày xuất vé, không phụ thuộc ngày khởi hành. Đây là khác biệt cơ bản so với dịch vụ lưu trú.</div></details>
+  <details class="faq"><summary>Giao dịch lưu trú kéo dài qua hai kỳ có được phân bổ theo từng kỳ không?</summary><div class="b">Không. Toàn bộ giao dịch được ghi nhận vào kỳ có ngày trả phòng, bảo đảm hoá đơn đối chiếu được với một mã đặt dịch vụ duy nhất.</div></details>
+  <details class="faq"><summary>Trường hợp sử dụng hết hạn mức trong kỳ, việc đặt dịch vụ được xử lý như thế nào?</summary><div class="b">Hệ thống tạm dừng tiếp nhận giao dịch mới cho đến khi kỳ gần nhất được thanh toán. Do chu kỳ thanh toán thực hiện hai lần mỗi tháng, hạn mức được giải toả tương ứng hai lần.</div></details>
+  <details class="faq"><summary>Người sử dụng dịch vụ có phải ứng trước chi phí không?</summary><div class="b">Không áp dụng đối với vé máy bay và các cơ sở lưu trú đã thiết lập cơ chế thanh toán qua Phòng HCQT. Riêng chi phí cá nhân phát sinh tại cơ sở lưu trú do người sử dụng dịch vụ thanh toán trực tiếp.</div></details>
+  <details class="faq"><summary>Quy trình cập nhật khi danh sách nhân sự thay đổi được thực hiện như thế nào?</summary><div class="b">Quản trị viên của đối tác chủ động thêm, chỉnh sửa hoặc khoá tài khoản trên hệ thống. Đối với thay đổi số lượng lớn, đề nghị gửi danh sách để Phòng HCQT cập nhật theo lô.</div></details>
+</section>
+
+<!-- ===== 8. CẦN THỐNG NHẤT ===== -->
+<section class="panel" id="p8">
+  <div class="phead"><h2>Nội dung cần thống nhất</h2>
+    <p>Bốn nội dung cần được thống nhất để Phòng HCQT triển khai cấu hình hệ thống. Các nội dung phát sinh trong buổi làm việc được ghi nhận bổ sung tại bảng phía dưới.</p></div>
+  <div class="tw"><table id="core"><thead><tr><th class="mid" style="width:44px">#</th>
+    <th style="min-width:230px">Nội dung</th><th style="min-width:260px">Ảnh hưởng nếu chưa thống nhất</th>
+    <th style="width:140px">Bên quyết định</th><th style="width:150px">Trạng thái</th>
+    <th style="min-width:190px">Kết luận</th></tr></thead><tbody></tbody></table></div>
+  <div class="note key">Sau khi thống nhất bốn nội dung trên, đối tác chỉ cần gửi lại <b>một biểu mẫu khởi tạo đã hoàn thiện</b>, trong đó đã bao gồm danh sách người dùng, cost center, chính sách công tác và luồng phê duyệt.</div>
+
+  <h3 class="sec">Nội dung ghi nhận tại buổi làm việc</h3>
+  <div class="tw"><table id="notes"><thead><tr><th class="mid" style="width:44px">#</th>
+    <th style="min-width:260px">Nội dung</th><th style="width:130px">Người nêu</th>
+    <th style="width:130px">Phụ trách</th><th style="width:140px">Hạn</th>
+    <th style="width:150px">Trạng thái</th><th style="width:44px"></th></tr></thead><tbody></tbody></table></div>
+  <div class="acts"><button class="btn btn-o" id="addNote">+ Thêm nội dung</button></div>
+</section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

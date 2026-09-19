@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 60">
+  <defs>
+    <linearGradient id="gr-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B041FF"/>
+      <stop offset="100%" stop-color="#00A693"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <rect x="6" y="8" width="44" height="44" rx="14" fill="url(#gr-logo)"/>
+    <path d="M28 18 L38 28 L28 38 L18 28 Z" fill="#ffffff" opacity="0.95"/>
+    <circle cx="28" cy="28" r="4" fill="url(#gr-logo)"/>
+    <text x="62" y="39" font-family="'Merriweather', 'Inter', serif" font-weight="700" font-size="24" fill="#142814" letter-spacing="-0.5">PHÒNG HCQT</text>
+  </g>
+</svg>
