@@ -1,0 +1,16 @@
+{
+  "name": "Quản Lý Kế Hoạch — BP QTTS",
+  "short_name": "Kế Hoạch QTTS",
+  "description": "Phần mềm quản lý kế hoạch triển khai dự án — Bộ Phận Quản Trị Tài Sản",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#B041FF",
+  "icons": [
+    {
+      "src": "/assets/xperise-logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
