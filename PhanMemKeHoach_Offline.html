@@ -213,6 +213,34 @@ h4.sub{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--gray
 
 /* task cards */
 .tasklist{display:flex;flex-direction:column;gap:9px}
+
+/* ===== Hạng mục đến hạn (Due Tasks) ===== */
+.due-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;
+  border:1px solid var(--bd);border-radius:16px;padding:14px 20px;margin-bottom:10px;
+  cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .15s}
+.due-card:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(20,40,20,.05)}
+.due-card.late{border-color:#F0C4B6;background:#fff}
+.due-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.due-l1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.due-ph{display:inline-flex;align-items:center;background:#E0F2FE;color:#0284C7;
+  font-family:var(--font-b);font-size:11.5px;font-weight:600;padding:2.5px 10px;border-radius:12px;white-space:nowrap}
+.due-title{font-family:var(--font-b);font-size:14.5px;color:#334155;line-height:1.4}
+.due-title b{color:#1E293B;font-weight:700}
+.due-l2{display:flex;align-items:center;gap:8px;padding-left:2px}
+.due-dt{font-family:var(--font-b);font-size:12px;color:#64748B;font-variant-numeric:tabular-nums}
+.due-tag.late{display:inline-flex;align-items:center;background:#FFEFEA;color:#C2401F;
+  font-family:var(--font-b);font-size:11px;font-weight:600;padding:1.5px 8px;border-radius:10px}
+.due-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.due-pill{display:inline-flex;align-items:center;font-family:var(--font-b);font-size:12px;
+  padding:3px 10px;border-radius:12px;white-space:nowrap}
+.due-pill.p-bank{background:#F3E8FF;color:#7A1FBF;font-weight:600}
+.due-pill.p-dept{background:#F1F5F9;color:#475569;font-weight:500}
+.due-pill.p-xp{background:#E6F7F5;color:#006B5E;font-weight:600}
+.due-star{color:#9333EA;font-size:15px;line-height:1}
+@media(max-width:768px){
+  .due-card{flex-direction:column;align-items:flex-start;gap:10px;padding:12px 14px}
+  .due-right{align-self:flex-start}
+}
 .tk{background:var(--white);border:1px solid var(--bd);border-radius:var(--r-md);padding:14px 16px;
  display:flex;gap:13px;align-items:flex-start;transition:box-shadow .2s,border-color .2s}
 .tk:hover{box-shadow:var(--sh-lg)}
@@ -1350,7 +1378,7 @@ function renderOverview(){
     });
   }
 
-  // next up
+  // next up (Hạng mục đến hạn)
   var nu=$("#nextUp");
   if(nu){
     nu.innerHTML="";
@@ -1360,11 +1388,74 @@ function renderOverview(){
       if(a.ms!==b.ms)return a.ms?-1:1;
       return (a.due||"9")<(b.due||"9")?-1:1;
     });
-    if(!sorted.length)nu.appendChild(el("div",{class:"empty"},"Tất cả các hạng mục đã hoàn thành!"));
-    sorted.slice(0,5).forEach(function(t){nu.appendChild(taskCard(t,true))});
+    if(!sorted.length){
+      nu.appendChild(el("div",{class:"empty"},"Tất cả các hạng mục đã hoàn thành!"));
+    } else {
+      sorted.slice(0,6).forEach(function(t){
+        nu.appendChild(renderNextUpCard(t));
+      });
+    }
   }
 
   renderCal();
+}
+
+function renderNextUpCard(t){
+  var late=isLate(t);
+  var card=el("div",{
+    class:"due-card"+(late?" late":""),
+    tabindex:"0",
+    role:"button"
+  });
+
+  var lCol=el("div",{class:"due-left"});
+
+  var l1=el("div",{class:"due-l1"});
+  l1.appendChild(el("span",{class:"due-ph"},t.ph));
+  var title=el("span",{class:"due-title"});
+  title.innerHTML=kw(t.n||"(chưa đặt tên)");
+  l1.appendChild(title);
+  lCol.appendChild(l1);
+
+  var l2=el("div",{class:"due-l2"});
+  var dueStr=isOpen(t)?whenText(t):("Hạn "+dmy(t.due));
+  l2.appendChild(el("span",{class:"due-dt"},dueStr));
+  if(late){
+    l2.appendChild(el("span",{class:"due-tag late"},"Quá hạn"));
+  }
+  lCol.appendChild(l2);
+  card.appendChild(lCol);
+
+  var rCol=el("div",{class:"due-right"});
+  var clientInput=$("[data-k='client']");
+  var clientName=(clientInput&&clientInput.value?clientInput.value.trim():"")||"Nam Á Bank";
+
+  if(isPair(t)){
+    rCol.appendChild(el("span",{class:"due-pill p-bank"},clientName));
+    rCol.appendChild(el("span",{class:"due-pill p-dept"},t.dept));
+  } else {
+    var sideName=t.side||"BP QTTS";
+    var sideCls="p-dept";
+    if(sideName.indexOf("QTTS")>=0||sideName.indexOf("HCQT")>=0||sideName==="Xperise"){
+      sideCls="p-xp";
+      sideName=(sideName.indexOf("QTTS")>=0?"BP QTTS":sideName);
+    } else if(sideName==="BLĐ"||sideName==="Hai bên"){
+      sideCls="p-dept";
+    } else {
+      sideCls="p-bank";
+    }
+    rCol.appendChild(el("span",{class:"due-pill "+sideCls},sideName));
+  }
+
+  if(t.ms){
+    rCol.appendChild(el("span",{class:"due-star"},"★"));
+  }
+
+  card.appendChild(rCol);
+
+  card.onclick=function(){goTask(t.id)};
+  card.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();goTask(t.id)}};
+  return card;
 }
 
 /* ---------- calendar ---------- */
@@ -1477,28 +1568,51 @@ var calToday=$("#calToday");if(calToday)calToday.onclick=function(){calRef=new D
 var flowFocus="";
 function laneOf(t){
   var d=(t.dept&&t.dept!=="—")?t.dept:"";
+  if(d) return (d==="BLĐ"?"bo":(d==="BP QTTS"?"xp":"cl:"+d));
   if(t.side && (t.side.indexOf("QTTS")>=0 || t.side.indexOf("HCQT")>=0)) return "xp";
   if(t.side==="BLĐ") return "bo";
-  if(t.side==="Đối tác") return d ? "cl:"+d : "cl:Đối tác";
-  return d ? "cl:"+d : "cl:"+(t.side||"Khác");
+  if(t.side) return (t.side==="BP QTTS"?"xp":"cl:"+t.side);
+  return "xp";
 }
+
+function laneEarliest(k){
+  var inLane=tasks.filter(function(t){return laneOf(t)===k});
+  if(!inLane.length)return {date:"9999-99-99",step:999999};
+  var minDate="9999-99-99";
+  var minStep=999999;
+  inLane.forEach(function(t){
+    var d=t.st||t.due||"";
+    if(d&&d<minDate)minDate=d;
+    var step=tasks.indexOf(t);
+    if(step<minStep)minStep=step;
+  });
+  return {date:minDate,step:minStep};
+}
+
 function laneKeys(){
   var has={};tasks.forEach(function(t){has[laneOf(t)]=1});
-  var out=[];
-  DEPTS.forEach(function(d){if(d!=="—"&&has["cl:"+d])out.push("cl:"+d)});
-  Object.keys(has).forEach(function(k){if(k.indexOf("cl:")===0&&k!=="cl:—"&&out.indexOf(k)<0)out.push(k)});
-  if(has["cl:—"])out.push("cl:—");
-  if(has["bo"])out.push("bo");
-  out.push("xp");
-  return out;
+  var keys=Object.keys(has);
+  // Sắp xếp các hàng đơn vị theo thứ tự ngày tháng của nhiệm vụ liên quan:
+  keys.sort(function(a,b){
+    var ea=laneEarliest(a);
+    var eb=laneEarliest(b);
+    if(ea.date!=="9999-99-99"&&eb.date!=="9999-99-99"&&ea.date!==eb.date){
+      return ea.date<eb.date?-1:1;
+    }
+    if(ea.date!=="9999-99-99"&&eb.date==="9999-99-99")return -1;
+    if(ea.date==="9999-99-99"&&eb.date!=="9999-99-99")return 1;
+    return ea.step-eb.step;
+  });
+  return keys;
 }
+
 function laneMeta(k){
   var clientInput = $("[data-k='client']");
   var clientName = (clientInput && clientInput.value ? clientInput.value.trim() : "") || "Nam Á Bank";
   if(k==="xp")return {c:"xp",pt:clientName,nm:"BP QTTS"};
   if(k==="bo")return {c:"bo",pt:clientName,nm:"BLĐ"};
-  var d=k.slice(3);
-  return d==="—"?{c:"cl",pt:clientName,nm:"Chưa phân đơn vị"}:{c:"cl",pt:clientName,nm:d};
+  var d=(k.indexOf("cl:")===0)?k.slice(3):k;
+  return {c:"cl",pt:clientName,nm:d==="—"?"Chưa phân đơn vị":d};
 }
 function isPair(t){return !!(t.dept&&t.dept!=="—")}
 function stNo(t){return tasks.indexOf(t)+1}

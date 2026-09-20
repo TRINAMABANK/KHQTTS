@@ -194,6 +194,34 @@ h4.sub{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--gray
 
 /* task cards */
 .tasklist{display:flex;flex-direction:column;gap:9px}
+
+/* ===== Hạng mục đến hạn (Due Tasks) ===== */
+.due-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;
+  border:1px solid var(--bd);border-radius:16px;padding:14px 20px;margin-bottom:10px;
+  cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .15s}
+.due-card:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(20,40,20,.05)}
+.due-card.late{border-color:#F0C4B6;background:#fff}
+.due-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.due-l1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.due-ph{display:inline-flex;align-items:center;background:#E0F2FE;color:#0284C7;
+  font-family:var(--font-b);font-size:11.5px;font-weight:600;padding:2.5px 10px;border-radius:12px;white-space:nowrap}
+.due-title{font-family:var(--font-b);font-size:14.5px;color:#334155;line-height:1.4}
+.due-title b{color:#1E293B;font-weight:700}
+.due-l2{display:flex;align-items:center;gap:8px;padding-left:2px}
+.due-dt{font-family:var(--font-b);font-size:12px;color:#64748B;font-variant-numeric:tabular-nums}
+.due-tag.late{display:inline-flex;align-items:center;background:#FFEFEA;color:#C2401F;
+  font-family:var(--font-b);font-size:11px;font-weight:600;padding:1.5px 8px;border-radius:10px}
+.due-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.due-pill{display:inline-flex;align-items:center;font-family:var(--font-b);font-size:12px;
+  padding:3px 10px;border-radius:12px;white-space:nowrap}
+.due-pill.p-bank{background:#F3E8FF;color:#7A1FBF;font-weight:600}
+.due-pill.p-dept{background:#F1F5F9;color:#475569;font-weight:500}
+.due-pill.p-xp{background:#E6F7F5;color:#006B5E;font-weight:600}
+.due-star{color:#9333EA;font-size:15px;line-height:1}
+@media(max-width:768px){
+  .due-card{flex-direction:column;align-items:flex-start;gap:10px;padding:12px 14px}
+  .due-right{align-self:flex-start}
+}
 .tk{background:var(--white);border:1px solid var(--bd);border-radius:var(--r-md);padding:14px 16px;
  display:flex;gap:13px;align-items:flex-start;transition:box-shadow .2s,border-color .2s}
 .tk:hover{box-shadow:var(--sh-lg)}
