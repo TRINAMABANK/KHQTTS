@@ -446,66 +446,7 @@ function renderOverview(){
   }
 
   // waiting on whom (Hạng mục chờ xử lý)
-  var bd=$("#byDept");
-  if(bd){
-    bd.innerHTML="";
-    var groups={};
-    tasks.filter(function(t){return t.stt!=="Hoàn thành"}).forEach(function(t){
-      var k = (t.side && (t.side.indexOf("QTTS")>=0 || t.side.indexOf("HCQT")>=0)) ? "BP QTTS" :
-              (t.side==="BLĐ" ? "BLĐ" :
-              (t.dept && t.dept!=="—" ? t.dept : (t.side || "Khác")));
-      (groups[k]=groups[k]||[]).push(t);
-    });
-    var keys=Object.keys(groups).sort(function(a,b){
-      var la=groups[a].filter(isLate).length,lb=groups[b].filter(isLate).length;
-      if(la!==lb)return lb-la;
-      var da=groups[a].filter(function(t){return t.due})[0];
-      var db=groups[b].filter(function(t){return t.due})[0];
-      return (da&&da.due||"9")<(db&&db.due||"9")?-1:1;
-    });
-    if(!keys.length)bd.appendChild(el("div",{class:"empty",style:"padding:14px"},"Không còn hạng mục tồn đọng."));
-    keys.forEach(function(k, ki){
-      var g=groups[k].slice().sort(function(a,b){
-        var la=isLate(a), lb=isLate(b);
-        if(la!==lb) return la ? -1 : 1;
-        return (a.due||"9")<(b.due||"9")?-1:1;
-      });
-      var lateCount = g.filter(isLate).length;
-      var isLast = (ki === keys.length - 1);
-      var wrap=el("div",{class:"dept-group-wrap",style:isLast?"border-bottom:none":""});
-      
-      // Header row with department pill, overdue pill and overflow count
-      var hd=el("div",{class:"dept-group-hd"});
-      var pillCls = (k==="BP QTTS"||k.indexOf("QTTS")>=0||k.indexOf("HCQT")>=0||k==="Xperise") ? "p-xp" : (k==="BLĐ"||k==="Hai bên" ? "p-bo" : "p-cl");
-      hd.appendChild(el("span",{class:"pill "+pillCls},k));
-      
-      if(lateCount > 0){
-        hd.appendChild(el("span",{class:"pill-overdue"},lateCount+" hạng mục quá hạn"));
-      }
-      
-      var shownCount = 2;
-      if(g.length > shownCount){
-        var moreSpan = el("span",{class:"dept-more-cnt"},"+"+(g.length - shownCount)+" hạng mục khác");
-        hd.appendChild(moreSpan);
-      }
-      wrap.appendChild(hd);
-      
-      // Task rows with date on left and bold keywords on right
-      g.slice(0, shownCount).forEach(function(t){
-        var r=el("div",{class:"dept-task-row"});
-        var dtSpan=el("span",{class:"dept-dt"+(isLate(t)?" late":"")}, t.due ? dmy(t.due) : "—");
-        r.appendChild(dtSpan);
-        
-        var nmSpan=el("span",{class:"dept-nm"});
-        nmSpan.innerHTML=kw(t.n || "(chưa đặt tên)");
-        r.appendChild(nmSpan);
-        
-        r.onclick=function(){ goTask(t.id); };
-        wrap.appendChild(r);
-      });
-      bd.appendChild(wrap);
-    });
-  }
+  renderByDept();
 
   // next up (Hạng mục đến hạn)
   var nu=$("#nextUp");
@@ -527,6 +468,163 @@ function renderOverview(){
   }
 
   renderCal();
+}
+
+var byDeptMode = "deploy"; // "deploy": Đơn vị triển khai, "lead": Đơn vị chủ trì
+
+function renderByDept(){
+  var bd = $("#byDept");
+  if(!bd) return;
+  bd.innerHTML = "";
+
+  var uncompleted = tasks.filter(function(t){ return t.stt !== "Hoàn thành"; });
+  if(!uncompleted.length){
+    bd.appendChild(el("div", {class: "empty", style: "padding:18px"}, "Không còn hạng mục tồn đọng."));
+    return;
+  }
+
+  var groups = {};
+  uncompleted.forEach(function(t){
+    var k = "";
+    if(byDeptMode === "deploy"){
+      // Phân theo Đơn vị triển khai (ưu tiên t.dept nếu có, fallback về t.side)
+      if(t.dept && t.dept !== "—"){
+        k = t.dept.trim();
+      } else if(t.side && (t.side.indexOf("QTTS") >= 0 || t.side.indexOf("HCQT") >= 0)){
+        k = "BP QTTS";
+      } else if(t.side){
+        k = t.side.trim();
+      } else {
+        k = "Chưa phân đơn vị";
+      }
+    } else {
+      // Phân theo Đơn vị chủ trì
+      if(t.side){
+        k = t.side.trim();
+      } else {
+        k = "BP QTTS";
+      }
+    }
+    (groups[k] = groups[k] || []).push(t);
+  });
+
+  function groupEarliest(taskList){
+    var minDate = "9999-99-99";
+    var minStep = 999999;
+    taskList.forEach(function(t){
+      var d = t.st || t.due || "";
+      if(d && d < minDate) minDate = d;
+      var step = tasks.indexOf(t);
+      if(step < minStep) minStep = step;
+    });
+    return {date: minDate, step: minStep};
+  }
+
+  var keys = Object.keys(groups).sort(function(a, b){
+    var la = groups[a].filter(isLate).length, lb = groups[b].filter(isLate).length;
+    if(la !== lb) return lb - la; // Đơn vị có việc quá hạn lên trước
+    var ea = groupEarliest(groups[a]);
+    var eb = groupEarliest(groups[b]);
+    if(ea.date !== "9999-99-99" && eb.date !== "9999-99-99" && ea.date !== eb.date){
+      return ea.date < eb.date ? -1 : 1;
+    }
+    return ea.step - eb.step;
+  });
+
+  keys.forEach(function(k, ki){
+    var g = groups[k].slice().sort(function(a, b){
+      var la = isLate(a), lb = isLate(b);
+      if(la !== lb) return la ? -1 : 1;
+      var da = a.st || a.due || "9";
+      var db = b.st || b.due || "9";
+      if(da !== db) return da < db ? -1 : 1;
+      return tasks.indexOf(a) - tasks.indexOf(b);
+    });
+
+    var lateCount = g.filter(isLate).length;
+    var isLast = (ki === keys.length - 1);
+    var wrap = el("div", {class: "dept-group-wrap", style: isLast ? "border-bottom:none" : ""});
+
+    // Header row with department pill, overdue pill and task count
+    var hd = el("div", {class: "dept-group-hd"});
+    var pillCls = (k === "BP QTTS" || k.indexOf("QTTS") >= 0 || k.indexOf("HCQT") >= 0 || k === "Xperise") ? "p-xp" :
+                  (k === "BLĐ" || k === "Hai bên" ? "p-bo" : "p-cl");
+    hd.appendChild(el("span", {class: "pill " + pillCls}, k));
+
+    if(lateCount > 0){
+      hd.appendChild(el("span", {class: "pill-overdue"}, lateCount + " hạng mục quá hạn"));
+    }
+
+    var cntSpan = el("span", {class: "dept-more-cnt"}, g.length + " hạng mục");
+    hd.appendChild(cntSpan);
+    wrap.appendChild(hd);
+
+    // Task rows with date on left, bold task name, and chips for Đơn vị chủ trì & Đơn vị triển khai
+    g.forEach(function(t){
+      var late = isLate(t);
+      var r = el("div", {class: "dept-task-row", tabindex: "0", role: "button"});
+      r.title = "Nhấp để mở chi tiết công việc";
+
+      var topDiv = el("div", {class: "dept-task-top"});
+      var dateStr = isOpen(t) ? whenText(t) : (t.st && t.due && t.st !== t.due ? (dmy(t.st) + " → " + dmy(t.due)) : (t.due ? dmy(t.due) : (t.st ? dmy(t.st) : "—")));
+      var dtSpan = el("span", {class: "dept-dt" + (late ? " late" : "")}, dateStr);
+      topDiv.appendChild(dtSpan);
+
+      var nmSpan = el("span", {class: "dept-nm"});
+      nmSpan.innerHTML = kw(t.n || "(chưa đặt tên)");
+      topDiv.appendChild(nmSpan);
+
+      if(t.ms){
+        topDiv.appendChild(el("span", {class: "cal-pill-ms", style: "font-size:10.5px;padding:2px 8px;margin-left:auto"}, "Mốc"));
+      }
+      if(late){
+        topDiv.appendChild(el("span", {class: "pill-overdue", style: "font-size:10.5px;padding:2px 8px;margin-left:" + (t.ms ? "4px" : "auto")}, "Quá hạn"));
+      }
+      r.appendChild(topDiv);
+
+      // Meta row: Đơn vị chủ trì & Đơn vị triển khai theo lịch
+      var metaDiv = el("div", {class: "dept-task-meta"});
+      
+      var leadChip = el("span", {class: "dept-chip chip-side"});
+      leadChip.innerHTML = '<i class="dot-xp"></i>Chủ trì: <b>' + esc(t.side || "BP QTTS") + '</b>';
+      metaDiv.appendChild(leadChip);
+
+      var deployName = (t.dept && t.dept !== "—") ? t.dept : (t.side || "BP QTTS");
+      var deployChip = el("span", {class: "dept-chip chip-dept"});
+      deployChip.innerHTML = '<i class="dot-cl"></i>Triển khai: <b>' + esc(deployName) + '</b>';
+      metaDiv.appendChild(deployChip);
+
+      if(t.ph){
+        var phChip = el("span", {class: "dept-chip chip-ph"}, t.ph);
+        metaDiv.appendChild(phChip);
+      }
+      r.appendChild(metaDiv);
+
+      r.onclick = function(){ goTask(t.id); };
+      r.onkeydown = function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); goTask(t.id); } };
+      wrap.appendChild(r);
+    });
+
+    bd.appendChild(wrap);
+  });
+}
+
+// Wire byDept toggle buttons
+var btnModeDeploy = $("#btnModeDeploy");
+var btnModeLead = $("#btnModeLead");
+if(btnModeDeploy && btnModeLead){
+  btnModeDeploy.onclick = function(){
+    byDeptMode = "deploy";
+    btnModeDeploy.classList.add("on");
+    btnModeLead.classList.remove("on");
+    renderByDept();
+  };
+  btnModeLead.onclick = function(){
+    byDeptMode = "lead";
+    btnModeLead.classList.add("on");
+    btnModeDeploy.classList.remove("on");
+    renderByDept();
+  };
 }
 
 function renderNextUpCard(t){

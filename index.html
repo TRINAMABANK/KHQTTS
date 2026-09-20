@@ -108,8 +108,16 @@
       <div id="phases"></div>
     </div>
     <div class="card">
-      <h4 style="font-family:var(--font-d);font-size:18px;margin-bottom:4px">Hạng mục chờ xử lý</h4>
-      <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px">Các hạng mục đến hạn gần nhất, phân theo đơn vị chịu trách nhiệm.</p>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap">
+        <div>
+          <h4 style="font-family:var(--font-d);font-size:18px;margin-bottom:4px">Hạng mục chờ xử lý</h4>
+          <p style="font-size:13px;color:var(--gray-500);margin-bottom:0">Các hạng mục đến hạn gần nhất, phân theo đơn vị chịu trách nhiệm.</p>
+        </div>
+        <div class="bydept-toggle" id="byDeptToggle" role="group" aria-label="Chế độ phân nhóm">
+          <button type="button" class="bydept-btn on" id="btnModeDeploy" data-mode="deploy">Đơn vị triển khai</button>
+          <button type="button" class="bydept-btn" id="btnModeLead" data-mode="lead">Đơn vị chủ trì</button>
+        </div>
+      </div>
       <div id="byDept"></div>
     </div>
   </div>
