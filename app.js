@@ -821,14 +821,63 @@ if(addBtn){
     }, 120);
   };
 }
-var resetBtn=$("#resetTask");
-if(resetBtn){
-  resetBtn.onclick=function(){
-    if(confirm("Khôi phục danh mục gốc? Toàn bộ nội dung công việc sẽ được thiết lập lại về ban đầu.")) {
-      uid=0;
-      seed();
-      refresh();
+/* ---------- Toast Notification Helper ---------- */
+function showToast(msg, duration){
+  var t = document.getElementById("appToast");
+  if(!t){
+    t = el("div", {id: "appToast", class: "app-toast"});
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add("on");
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){
+    t.classList.remove("on");
+  }, duration || 3200);
+}
+
+/* ---------- Lưu Dự Án vào Host Server VPS quanlyts.com ---------- */
+var saveProjectBtn = $("#saveProjectBtn") || $("#resetTask");
+if(saveProjectBtn){
+  saveProjectBtn.onclick = async function(){
+    if(saveTimeout) clearTimeout(saveTimeout);
+    saveProjectBtn.disabled = true;
+    var originalHtml = saveProjectBtn.innerHTML;
+    saveProjectBtn.innerHTML = "⏳ Đang lưu...";
+
+    var state = buildState();
+
+    // 1. Lưu dự phòng LocalStorage
+    try {
+      localStorage.setItem("xperise_onboarding_state", JSON.stringify(state));
+    } catch(err){}
+
+    // 2. Lưu trực tiếp vào data chung của webapp quanlyts.com trên host VPS
+    var ok = await saveStateToServer(state);
+
+    var now = new Date();
+    var timeStr = ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2) + ":" + ("0" + now.getSeconds()).slice(-2);
+
+    var badge = $("#saveBadge");
+    if(badge){
+      badge.textContent = ok ? ("✓ Đã lưu máy chủ lúc " + timeStr) : ("✓ Đã lưu nội bộ lúc " + timeStr);
+      badge.style.opacity = "1";
     }
+
+    if(ok){
+      saveProjectBtn.innerHTML = "✓ Đã Lưu Dự Án!";
+      saveProjectBtn.classList.add("btn-saved-success");
+      showToast("✓ Đã lưu toàn bộ thông tin dự án vào dữ liệu máy chủ quanlyts.com thành công!");
+    } else {
+      saveProjectBtn.innerHTML = "⚠ Đã lưu nội bộ";
+      showToast("⚠️ Đã lưu vào bộ nhớ trình duyệt (Không kết nối được máy chủ VPS quanlyts.com)");
+    }
+
+    setTimeout(function(){
+      saveProjectBtn.innerHTML = originalHtml;
+      saveProjectBtn.disabled = false;
+      saveProjectBtn.classList.remove("btn-saved-success");
+    }, 2500);
   };
 }
 

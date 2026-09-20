@@ -48,6 +48,7 @@ button{font-family:inherit}
 .btn-o:hover{border-color:var(--green);color:var(--green)}
 .btn-s{padding:7px 14px;font-size:13px}
 .btn:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.btn-saved-success{background:rgba(0,166,147,.12)!important;color:var(--green-dark)!important;border-color:var(--green)!important}
 
 /* tabs */
 .tabs{position:sticky;top:68px;z-index:55;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);
@@ -411,6 +412,8 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
 .modal-hd h3{font-size:16px;font-weight:600;margin:0;color:var(--ink)}
 .modal-body{padding:20px 22px;font-size:13.5px}
 .modal-ft{padding:14px 22px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px;background:var(--soft-white)}
+.app-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,40,20,.94);color:#fff;padding:12px 24px;border-radius:var(--pill);font-size:13.5px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.28);z-index:9999;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;white-space:nowrap;max-width:90vw;text-overflow:ellipsis;overflow:hidden;backdrop-filter:blur(8px)}
+.app-toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ==========================================================================
    RESPONSIVE DESIGN FOR TABLET & MOBILE
