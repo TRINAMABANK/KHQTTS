@@ -1,11 +1,11 @@
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0"
-title Phần Mềm Kế Hoạch Triển Khai Phòng HCQT
+title Phần Mềm Kế Hoạch Triển Khai - BP QTTS
 
 cls
 echo =======================================================================
-echo     PHAN MEM WEBAPP QUAN LY KE HOACH TRIEN KHAI PHÒNG HCQT
+echo     PHAN MEM WEBAPP QUAN LY KE HOACH TRIEN KHAI - BP QTTS
 echo =======================================================================
 echo.
 echo [*] Dang khoi dong may chu cuc bo tai cong 3000...
