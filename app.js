@@ -908,24 +908,30 @@ function calClass(x){
   var nLower = (x.n || "").toLowerCase();
   var phLower = (x.ph || "").toLowerCase();
   
-  // Mint green for support after go-live or post-deployment
+  // 1. Mint green for support after go-live or post-deployment
   if(nLower.indexOf("hỗ trợ") >= 0 || nLower.indexOf("sau triển khai") >= 0 || (phLower.indexOf("golive") >= 0 && !x.ms)){
     return "ch-xp";
   }
-  // Milestone (purple)
-  if(x.ms) return "ch-ms ms";
-  // BLĐ / Pháp chế / Hợp đồng / Biểu mẫu (gray)
-  if(x.side === "BLĐ" || x.dept === "BLĐ" || x.dept === "Phòng PLTT" || nLower.indexOf("hợp đồng") >= 0 || nLower.indexOf("biểu mẫu") >= 0){
-    return "ch-bo";
-  }
-  // Chuẩn bị / Đơn vị phối hợp / Khởi động / Dữ liệu (peach / warm orange)
-  if(x.ph === "Chuẩn bị" || x.side === "Đối tác" || x.dept === "Đối tác" || (x.dept && x.dept !== "—" && x.dept !== "BP QTTS") || nLower.indexOf("khởi động") >= 0 || nLower.indexOf("biên bản") >= 0 || nLower.indexOf("dữ liệu") >= 0){
+
+  // 2. Peach for preparation, kickoff, memos, data collection (Days 16, 17, 18 in sample image)
+  if(x.ph === "Chuẩn bị" || nLower.indexOf("khởi động") >= 0 || nLower.indexOf("biên bản") >= 0 || nLower.indexOf("dữ liệu") >= 0 || nLower.indexOf("thu thập") >= 0){
     return "ch-cl";
   }
-  // BP QTTS implementation (mint green)
+
+  // 3. Lavender Purple for Milestones (Days 21, 23, 25, 28 in sample image)
+  if(x.ms) return "ch-ms ms";
+
+  // 4. Cool gray for BLĐ, legal, contracts, forms, memos (Day 23 in sample image)
+  if(x.side === "BLĐ" || x.dept === "BLĐ" || x.dept === "Phòng PLTT" || nLower.indexOf("hợp đồng") >= 0 || nLower.indexOf("biểu mẫu") >= 0 || nLower.indexOf("bảng kê") >= 0 || nLower.indexOf("tờ trình") >= 0){
+    return "ch-bo";
+  }
+
+  // 5. BP QTTS implementation (Mint Green)
   if(x.side && (x.side.indexOf("QTTS") >= 0 || x.side.indexOf("HCQT") >= 0)){
     return "ch-xp";
   }
+
+  // 6. Default / Partner units (Peach)
   return "ch-cl";
 }
 
