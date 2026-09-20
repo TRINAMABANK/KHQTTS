@@ -134,6 +134,7 @@ function updateClientTitle(){
 if(clientInput){
   clientInput.addEventListener("input",function(){
     updateClientTitle();
+    renderFlow();
     autoSave();
   });
 }
@@ -649,10 +650,12 @@ function laneKeys(){
   return out;
 }
 function laneMeta(k){
-  if(k==="xp")return {c:"xp",pt:"Đơn vị chủ trì",nm:"BP QTTS"};
-  if(k==="bo")return {c:"bo",pt:"Chỉ đạo & Phê duyệt",nm:"BLĐ"};
+  var clientInput = $("[data-k='client']");
+  var clientName = (clientInput && clientInput.value ? clientInput.value.trim() : "") || "Nam Á Bank";
+  if(k==="xp")return {c:"xp",pt:clientName,nm:"BP QTTS"};
+  if(k==="bo")return {c:"bo",pt:clientName,nm:"BLĐ"};
   var d=k.slice(3);
-  return d==="—"?{c:"cl",pt:"Đơn vị phối hợp",nm:"Chưa phân đơn vị"}:{c:"cl",pt:"Đơn vị phối hợp",nm:d};
+  return d==="—"?{c:"cl",pt:clientName,nm:"Chưa phân đơn vị"}:{c:"cl",pt:clientName,nm:d};
 }
 function isPair(t){return !!(t.dept&&t.dept!=="—")}
 function stNo(t){return tasks.indexOf(t)+1}
@@ -664,30 +667,122 @@ function span(a,b){
 }
 function isOpen(t){return !!(t.st&&!t.due)}
 function whenText(t){
-  if(t.open==="from")return "Từ "+dmy(t.st)+" (liên tục)";
-  if(t.open==="after")return "Sau Go-live ("+dmy(t.st)+")";
+  if(t.open==="from")return "Từ "+dmy(t.st);
+  if(t.open==="after")return "Sau "+dmy(t.st);
   return span(t.st,t.due);
+}
+
+function phaseDateText(p,pIdx){
+  var inPhase=tasks.filter(function(t){return t.ph===p});
+  if(!inPhase.length)return "—";
+  var sts=[],dues=[];
+  inPhase.forEach(function(t){
+    if(t.st)sts.push(t.st);
+    if(t.due)dues.push(t.due);
+    else if(t.st)dues.push(t.st);
+  });
+  sts.sort();
+  dues.sort();
+  var minSt=sts[0];
+  var maxDue=dues[dues.length-1];
+
+  var cur=null;
+  for(var i=0;i<PHASES.length;i++){
+    var ps=tasks.filter(function(t){return t.ph===PHASES[i]});
+    if(ps.length&&ps.some(function(t){return t.stt!=="Hoàn thành"})){
+      cur=PHASES[i];
+      break;
+    }
+  }
+
+  if(p===cur){
+    if(minSt&&maxDue&&minSt!==maxDue){
+      return dmy(minSt)+" → "+dmy(maxDue)+", đang thực hiện";
+    }
+    return (minSt?dmy(minSt):"") + ", đang thực hiện";
+  }
+
+  if(pIdx===PHASES.length-1||inPhase.some(function(t){return t.open==="from"||t.open==="after"})){
+    return "Từ "+(minSt?dmy(minSt):"—")+" trở đi";
+  }
+
+  if(minSt&&maxDue){
+    if(minSt===maxDue)return dmy(minSt);
+    return dmy(minSt)+" → "+dmy(maxDue);
+  }
+  if(minSt)return dmy(minSt);
+  return "—";
 }
 
 function renderFlow(){
   var grid=$("#flGrid");if(!grid)return;
   grid.innerHTML="";
   var keys=laneKeys();
-  grid.style.gridTemplateColumns="190px repeat("+PHASES.length+",minmax(190px,1fr))";
-  grid.style.minWidth="calc(190px + 190px * "+PHASES.length+")";
+  grid.style.gridTemplateColumns="200px repeat("+PHASES.length+",minmax(210px,1fr))";
+  grid.style.minWidth="calc(200px + 210px * "+PHASES.length+")";
 
-  grid.appendChild(el("div",{class:"fl-col-hd",style:"border-right:1px solid var(--bd)"},"Đơn vị phụ trách"));
-  PHASES.forEach(function(p){grid.appendChild(el("div",{class:"fl-col-hd"},p))});
+  // Top-left corner: "Đơn vị phụ trách"
+  grid.appendChild(el("div",{class:"fl-corner"},"Đơn vị phụ trách"));
 
+  // Stepper chevrons across top
+  var curPhase=null;
+  for(var i=0;i<PHASES.length;i++){
+    var ps=tasks.filter(function(t){return t.ph===PHASES[i]});
+    if(ps.length&&ps.some(function(t){return t.stt!=="Hoàn thành"})){
+      curPhase=PHASES[i];
+      break;
+    }
+  }
+
+  PHASES.forEach(function(p,idx){
+    var isCur=(p===curPhase);
+    var cls="fl-ph";
+    if(idx===0) cls+=" first";
+    if(idx===PHASES.length-1) cls+=" last";
+    if(isCur) cls+=" cur";
+
+    var phDiv=el("div",{class:cls});
+    phDiv.style.zIndex=String(PHASES.length-idx+1);
+
+    var tDiv=el("div",{class:"t"});
+    tDiv.appendChild(el("span",{class:"no"},String(idx+1)));
+    tDiv.appendChild(el("span",null,p));
+    phDiv.appendChild(tDiv);
+
+    phDiv.appendChild(el("div",{class:"d"},phaseDateText(p,idx)));
+    grid.appendChild(phDiv);
+  });
+
+  // Lanes and cards
   keys.forEach(function(k){
     var m=laneMeta(k);
-    var rh=el("div",{class:"fl-rh "+m.c});
+    var inLane=tasks.filter(function(t){return laneOf(t)===k});
+    var uncompleted=inLane.filter(function(t){return t.stt!=="Hoàn thành"});
+    var lateTasks=inLane.filter(isLate);
+
+    var isDim=(flowFocus&&flowFocus!==k);
+    var rh=el("div",{class:"fl-lab "+m.c+(isDim?" dim":"")});
     rh.appendChild(el("div",{class:"pt"},m.pt));
     rh.appendChild(el("div",{class:"nm"},m.nm));
+
+    var ct=el("div",{class:"ct"});
+    if(inLane.length===0){
+      ct.textContent="Chưa có việc";
+    }else if(uncompleted.length===0){
+      ct.textContent="Đã hoàn thành ("+inLane.length+"/"+inLane.length+")";
+    }else{
+      var txt=uncompleted.length+" / "+inLane.length+" việc chưa xong";
+      if(lateTasks.length>0){
+        ct.innerHTML=txt+', <b class="ct-late">'+lateTasks.length+' quá hạn</b>';
+      }else{
+        ct.textContent=txt;
+      }
+    }
+    rh.appendChild(ct);
     grid.appendChild(rh);
 
     PHASES.forEach(function(p){
-      var cell=el("div",{class:"fl-cell"});
+      var cell=el("div",{class:"fl-cell "+m.c+(isDim?" dim":"")});
       var inPhase=tasks.filter(function(t){return t.ph===p&&laneOf(t)===k});
       inPhase.forEach(function(t){cell.appendChild(flowNode(t))});
       grid.appendChild(cell);
@@ -746,22 +841,54 @@ function flowNode(t){
   var done=t.stt==="Hoàn thành";
   var late=isLate(t);
   var pair=isPair(t);
-  var nd=el("div",{class:"fl-node"+(done?" done":"")+(late?" late":"")+(pair?" pair":"")+(t.ms?" ms":""),tabindex:"0",role:"button"});
-  var top=el("div",{class:"fl-top"});
+  var laneK=laneOf(t);
+  var laneType=laneK==="xp"?"xp":(laneK==="bo"?"bo":"cl");
+
+  var nd=el("div",{
+    class:"fl-c "+laneType+(done?" done":"")+(late?" late":"")+(t.ms?" ms":""),
+    tabindex:"0",
+    role:"button"
+  });
+
+  var r=el("div",{class:"r"});
   var n=el("span",{class:"fl-n"},done?"✓":String(stNo(t)));
-  if(t.ms&&!done)n.style.background="var(--gradient)";
-  top.appendChild(n);
-  top.appendChild(el("span",{class:"fl-dt"},whenText(t)));
-  nd.appendChild(top);
+  if(t.ms&&!done){
+    n.style.background="#2563EB";
+  }else if(!done){
+    n.style.background="#1E293B";
+  }
+  r.appendChild(n);
 
-  var tx=el("div",{class:"fl-tx"});
-  tx.innerHTML=kw(t.n||"(chưa đặt tên)");
-  nd.appendChild(tx);
+  var dt=el("span",{class:"dt"},whenText(t));
+  r.appendChild(dt);
 
-  var ft=el("div",{class:"fl-ft"});
-  if(t.pic)ft.appendChild(el("span",{class:"fl-pic"},t.pic));
-  if(isPair(t))ft.appendChild(el("span",{class:"fl-tag with"},"Phối hợp: "+t.dept));
-  ft.appendChild(stTag(t));
+  if(t.ms){
+    r.appendChild(el("span",{class:"star"},"★"));
+  }
+  nd.appendChild(r);
+
+  var nm=el("div",{class:"nm"});
+  nm.innerHTML=kw(t.n||"(chưa đặt tên)");
+  nd.appendChild(nm);
+
+  var ft=el("div",{class:"ft"});
+  if(late){
+    ft.appendChild(el("span",{class:"fl-tag late"},"Quá hạn"));
+  }
+  if(t.stt==="Chưa bắt đầu"){
+    ft.appendChild(el("span",{class:"fl-tag s0"},"• Chưa bắt đầu"));
+  }else if(t.stt==="Đang làm"){
+    ft.appendChild(el("span",{class:"fl-tag s1"},"Đang làm"));
+  }else if(t.stt==="Hoàn thành"){
+    ft.appendChild(el("span",{class:"fl-tag s2"},"✓ Hoàn thành"));
+  }else if(t.stt==="Vướng mắc"){
+    ft.appendChild(el("span",{class:"fl-tag late"},"⚠ Vướng mắc"));
+  }
+
+  if(pair){
+    var pairLabel=(laneType==="xp")?("Phối hợp: "+t.dept):("Cùng "+(t.side||"BP QTTS"));
+    ft.appendChild(el("span",{class:"fl-tag with"},pairLabel));
+  }
   nd.appendChild(ft);
 
   nd.onclick=function(){goTask(t.id)};

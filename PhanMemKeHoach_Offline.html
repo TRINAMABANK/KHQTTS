@@ -344,66 +344,62 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
 .dot-cl{background:var(--purple)}.dot-xp{background:var(--green)}.dot-bo{background:var(--gradient)}
 
 .fl-wrap{border:1px solid var(--bd);border-radius:var(--r-lg);background:#fff;box-shadow:var(--sh);overflow-x:auto}
-.fl-grid{display:grid;grid-template-columns:178px repeat(var(--cols,6),minmax(208px,1fr));min-width:calc(178px + 208px * var(--cols,6))}
-.fl-corner{position:sticky;left:0;z-index:3;background:var(--soft-white);padding:14px 16px;font-size:12px;
-  color:var(--gray-500);display:flex;align-items:flex-end;border-right:1px solid var(--bd)}
-.fl-ph{position:relative;background:var(--soft-white);padding:12px 26px 12px 24px;margin-left:-12px;
+.fl-grid{display:grid;grid-template-columns:190px repeat(var(--cols,6),minmax(200px,1fr));min-width:calc(190px + 200px * var(--cols,6))}
+.fl-corner{position:sticky;left:0;z-index:10;background:#F8FAFC;padding:14px 18px;font-family:var(--font-b);font-size:12.5px;
+  font-weight:600;color:#64748B;display:flex;align-items:center;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.fl-ph{position:relative;background:#F8FAFC;padding:12px 24px 12px 28px;margin-left:-12px;
   clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,14px 50%);
-  display:flex;flex-direction:column;gap:1px;min-height:62px;justify-content:center}
-.fl-ph.first{margin-left:0;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%)}
+  display:flex;flex-direction:column;gap:2px;min-height:64px;justify-content:center;border-bottom:1px solid var(--bd);
+  filter:drop-shadow(2px 0 0 #fff)}
+.fl-ph.first{margin-left:0;padding-left:20px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%)}
 .fl-ph.last{clip-path:polygon(0 0,100% 0,100% 100%,0 100%,14px 50%)}
-.fl-ph .t{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;line-height:1.25}
+.fl-ph .t{display:flex;align-items:center;gap:8px;font-family:var(--font-b);font-weight:700;font-size:13.5px;color:#1E293B;line-height:1.25}
 .fl-ph .no{flex:0 0 20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;
-  background:#fff;color:var(--ink);border:1px solid var(--bd);font-variant-numeric:tabular-nums}
-.fl-ph .d{font-size:12px;color:var(--gray-500);padding-left:28px;font-variant-numeric:tabular-nums}
-.fl-ph.cur{background:var(--ink);color:#fff}
-.fl-ph.cur .d{color:rgba(255,255,255,.72)}
-.fl-ph.cur .no{background:var(--gradient);color:#fff;border-color:transparent}
-.fl-ph.fin{background:rgba(0,166,147,.10)}
-.fl-ph.fin .no{background:var(--green);color:#fff;border-color:transparent}
+  background:#fff;color:#1E293B;border:1.5px solid var(--bd);font-variant-numeric:tabular-nums}
+.fl-ph .d{font-family:var(--font-b);font-size:11.5px;color:#64748B;padding-left:28px;font-variant-numeric:tabular-nums}
+.fl-ph.cur{background:#142814!important;color:#fff!important}
+.fl-ph.cur .t{color:#fff!important}
+.fl-ph.cur .d{color:rgba(255,255,255,.75)!important}
+.fl-ph.cur .no{background:#7C3AED!important;color:#fff!important;border-color:transparent!important}
 
-.fl-lab{position:sticky;left:0;z-index:2;background:#fff;border-top:1px solid var(--bd);border-right:1px solid var(--bd);
-  padding:14px 14px 14px 20px;display:flex;flex-direction:column;justify-content:center;gap:1px;transition:opacity .2s}
+.fl-lab{position:sticky;left:0;z-index:5;background:#fff;border-top:1px solid var(--bd);border-right:1px solid var(--bd);
+  padding:16px 16px 16px 20px;display:flex;flex-direction:column;justify-content:center;gap:2px;transition:opacity .2s}
 .fl-lab::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0}
-.fl-lab.cl::before{background:var(--purple)}.fl-lab.xp::before{background:var(--green)}.fl-lab.bo::before{background:var(--gradient)}
-.fl-lab .pt{font-size:11.5px;color:var(--gray-500)}
-.fl-lab .nm{font-family:var(--font-d);font-size:17px;line-height:1.25}
-.fl-lab .ct{font-size:11.5px;color:var(--gray-500);margin-top:3px;font-variant-numeric:tabular-nums}
-.fl-lab .ct b{color:var(--red);font-weight:600}
+.fl-lab.cl::before{background:#A855F7}.fl-lab.xp::before{background:var(--green)}.fl-lab.bo::before{background:#64748B}
+.fl-lab .pt{font-family:var(--font-b);font-size:11.5px;color:#64748B;font-weight:500;margin-bottom:1px}
+.fl-lab .nm{font-family:var(--font-b);font-size:17px;font-weight:700;color:#1E293B;line-height:1.25;margin-bottom:3px}
+.fl-lab .ct{font-family:var(--font-b);font-size:12px;color:#64748B;font-variant-numeric:tabular-nums}
+.fl-lab .ct b,.fl-lab .ct .ct-late{color:#C2401F!important;font-weight:700}
 .fl-lab.grp{border-top:2px solid var(--ink)}
-.fl-cell{border-top:1px solid var(--bd);padding:10px;display:flex;flex-direction:column;gap:8px;min-height:74px;transition:opacity .2s}
+.fl-cell{border-top:1px solid var(--bd);padding:10px;display:flex;flex-direction:column;gap:8px;min-height:84px;transition:opacity .2s}
 .fl-cell+.fl-cell{border-left:1px dashed var(--gray-200)}
 .fl-cell.grp{border-top:2px solid var(--ink)}
-.fl-cell.cl{background:rgba(176,65,255,.028)}
-.fl-cell.xp{background:rgba(0,166,147,.035)}
+.fl-cell.cl{background:rgba(176,65,255,.022)}
+.fl-cell.xp{background:rgba(0,166,147,.025)}
 .fl-cell.bo{background:#FCFCFA}
 .dim{opacity:.28}
 .fl-c{display:block;width:100%;text-align:left;font-family:var(--font-b);color:var(--ink);cursor:pointer;
-  background:#fff;border:1px solid var(--bd);border-radius:12px;padding:9px 11px 10px;
-  box-shadow:0 1px 2px rgba(20,40,20,.04);transition:border-color .2s,box-shadow .2s,opacity .2s}
-.fl-c.cl{border-left:3px solid var(--purple)}
-.fl-c.xp{border-left:3px solid var(--green)}
-.fl-c.bo{border-left:3px solid var(--purple-med)}
-.fl-c:hover,.fl-c.hi{border-color:var(--ink);box-shadow:var(--sh-lg)}
-.fl-c:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
-.fl-c .r{display:flex;align-items:center;gap:7px;margin-bottom:5px}
-.fl-n{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:#fff;
-  font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
-.fl-c.ms .fl-n{background:var(--gradient)}
-.fl-c .dt{font-size:11.5px;color:var(--gray-500);font-variant-numeric:tabular-nums;flex:1}
-.fl-c .star{color:var(--purple);font-size:13px;line-height:1}
-.fl-c .nm{font-size:13px;font-weight:500;line-height:1.38}
-.fl-c .ft{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
-.fl-tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:var(--pill);white-space:nowrap}
-.fl-tag i{width:6px;height:6px;border-radius:50%;background:currentColor}
-.fl-tag.s0{background:var(--gray-100);color:var(--gray-500)}
+  background:#fff;border:1px solid var(--bd);border-left:3px solid #8B5CF6;border-radius:12px;padding:10px 12px;
+  box-shadow:0 1px 3px rgba(20,40,20,.05);transition:border-color .2s,box-shadow .2s,transform .15s}
+.fl-c:hover{box-shadow:var(--sh-lg);transform:translateY(-1px)}
+.fl-c.cl{border-left-color:#8B5CF6}
+.fl-c.xp{border-left-color:var(--green)}
+.fl-c.bo{border-left-color:#64748B}
+.fl-c.late{background:#FFF8F6!important;border-color:#FCA5A5!important;border-left-color:#EF4444!important}
+.fl-c.late .dt{color:#C2401F!important;font-weight:700}
+.fl-c .r{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.fl-c .fl-n{flex:0 0 20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#2563EB;color:#fff;
+  font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.fl-c .dt{font-size:11.5px;color:#64748B;font-weight:600;font-variant-numeric:tabular-nums;flex:1}
+.fl-c .star{color:#9333EA;font-size:13px;line-height:1}
+.fl-c .nm{font-size:12.5px;font-weight:600;color:#1E293B;line-height:1.45}
+.fl-c .ft{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.fl-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:var(--pill);white-space:nowrap}
+.fl-tag.s0{background:var(--gray-100);color:#64748B;font-weight:500}
 .fl-tag.s1{background:var(--amber-bg);color:var(--amber)}
 .fl-tag.s2{background:rgba(0,166,147,.12);color:var(--green-dark)}
-.fl-tag.s3,.fl-tag.late{background:var(--red-bg);color:var(--red)}
-.fl-tag.with{background:rgba(0,166,147,.1);color:var(--green-dark)}
-.fl-tag.with2{background:rgba(176,65,255,.1);color:var(--purple-dark)}
-.fl-c.late{border-color:#F0C4B6;background:#FFFBFA}
-.fl-c.late .dt{color:var(--red);font-weight:600}
+.fl-tag.late{background:#FEE2E2!important;color:#DC2626!important}
+.fl-tag.with{background:#E6F7F5!important;color:#006B5E!important}
 .fl-c.done{background:var(--soft-white);box-shadow:none}
 .fl-c.done .nm{color:var(--gray-500)}
 .fl-c.done .fl-n{background:var(--green)}
@@ -981,6 +977,7 @@ function updateClientTitle(){
 if(clientInput){
   clientInput.addEventListener("input",function(){
     updateClientTitle();
+    renderFlow();
     autoSave();
   });
 }
@@ -1496,10 +1493,12 @@ function laneKeys(){
   return out;
 }
 function laneMeta(k){
-  if(k==="xp")return {c:"xp",pt:"Đơn vị chủ trì",nm:"BP QTTS"};
-  if(k==="bo")return {c:"bo",pt:"Chỉ đạo & Phê duyệt",nm:"BLĐ"};
+  var clientInput = $("[data-k='client']");
+  var clientName = (clientInput && clientInput.value ? clientInput.value.trim() : "") || "Nam Á Bank";
+  if(k==="xp")return {c:"xp",pt:clientName,nm:"BP QTTS"};
+  if(k==="bo")return {c:"bo",pt:clientName,nm:"BLĐ"};
   var d=k.slice(3);
-  return d==="—"?{c:"cl",pt:"Đơn vị phối hợp",nm:"Chưa phân đơn vị"}:{c:"cl",pt:"Đơn vị phối hợp",nm:d};
+  return d==="—"?{c:"cl",pt:clientName,nm:"Chưa phân đơn vị"}:{c:"cl",pt:clientName,nm:d};
 }
 function isPair(t){return !!(t.dept&&t.dept!=="—")}
 function stNo(t){return tasks.indexOf(t)+1}
@@ -1511,30 +1510,122 @@ function span(a,b){
 }
 function isOpen(t){return !!(t.st&&!t.due)}
 function whenText(t){
-  if(t.open==="from")return "Từ "+dmy(t.st)+" (liên tục)";
-  if(t.open==="after")return "Sau Go-live ("+dmy(t.st)+")";
+  if(t.open==="from")return "Từ "+dmy(t.st);
+  if(t.open==="after")return "Sau "+dmy(t.st);
   return span(t.st,t.due);
+}
+
+function phaseDateText(p,pIdx){
+  var inPhase=tasks.filter(function(t){return t.ph===p});
+  if(!inPhase.length)return "—";
+  var sts=[],dues=[];
+  inPhase.forEach(function(t){
+    if(t.st)sts.push(t.st);
+    if(t.due)dues.push(t.due);
+    else if(t.st)dues.push(t.st);
+  });
+  sts.sort();
+  dues.sort();
+  var minSt=sts[0];
+  var maxDue=dues[dues.length-1];
+
+  var cur=null;
+  for(var i=0;i<PHASES.length;i++){
+    var ps=tasks.filter(function(t){return t.ph===PHASES[i]});
+    if(ps.length&&ps.some(function(t){return t.stt!=="Hoàn thành"})){
+      cur=PHASES[i];
+      break;
+    }
+  }
+
+  if(p===cur){
+    if(minSt&&maxDue&&minSt!==maxDue){
+      return dmy(minSt)+" → "+dmy(maxDue)+", đang thực hiện";
+    }
+    return (minSt?dmy(minSt):"") + ", đang thực hiện";
+  }
+
+  if(pIdx===PHASES.length-1||inPhase.some(function(t){return t.open==="from"||t.open==="after"})){
+    return "Từ "+(minSt?dmy(minSt):"—")+" trở đi";
+  }
+
+  if(minSt&&maxDue){
+    if(minSt===maxDue)return dmy(minSt);
+    return dmy(minSt)+" → "+dmy(maxDue);
+  }
+  if(minSt)return dmy(minSt);
+  return "—";
 }
 
 function renderFlow(){
   var grid=$("#flGrid");if(!grid)return;
   grid.innerHTML="";
   var keys=laneKeys();
-  grid.style.gridTemplateColumns="190px repeat("+PHASES.length+",minmax(190px,1fr))";
-  grid.style.minWidth="calc(190px + 190px * "+PHASES.length+")";
+  grid.style.gridTemplateColumns="200px repeat("+PHASES.length+",minmax(210px,1fr))";
+  grid.style.minWidth="calc(200px + 210px * "+PHASES.length+")";
 
-  grid.appendChild(el("div",{class:"fl-col-hd",style:"border-right:1px solid var(--bd)"},"Đơn vị phụ trách"));
-  PHASES.forEach(function(p){grid.appendChild(el("div",{class:"fl-col-hd"},p))});
+  // Top-left corner: "Đơn vị phụ trách"
+  grid.appendChild(el("div",{class:"fl-corner"},"Đơn vị phụ trách"));
 
+  // Stepper chevrons across top
+  var curPhase=null;
+  for(var i=0;i<PHASES.length;i++){
+    var ps=tasks.filter(function(t){return t.ph===PHASES[i]});
+    if(ps.length&&ps.some(function(t){return t.stt!=="Hoàn thành"})){
+      curPhase=PHASES[i];
+      break;
+    }
+  }
+
+  PHASES.forEach(function(p,idx){
+    var isCur=(p===curPhase);
+    var cls="fl-ph";
+    if(idx===0) cls+=" first";
+    if(idx===PHASES.length-1) cls+=" last";
+    if(isCur) cls+=" cur";
+
+    var phDiv=el("div",{class:cls});
+    phDiv.style.zIndex=String(PHASES.length-idx+1);
+
+    var tDiv=el("div",{class:"t"});
+    tDiv.appendChild(el("span",{class:"no"},String(idx+1)));
+    tDiv.appendChild(el("span",null,p));
+    phDiv.appendChild(tDiv);
+
+    phDiv.appendChild(el("div",{class:"d"},phaseDateText(p,idx)));
+    grid.appendChild(phDiv);
+  });
+
+  // Lanes and cards
   keys.forEach(function(k){
     var m=laneMeta(k);
-    var rh=el("div",{class:"fl-rh "+m.c});
+    var inLane=tasks.filter(function(t){return laneOf(t)===k});
+    var uncompleted=inLane.filter(function(t){return t.stt!=="Hoàn thành"});
+    var lateTasks=inLane.filter(isLate);
+
+    var isDim=(flowFocus&&flowFocus!==k);
+    var rh=el("div",{class:"fl-lab "+m.c+(isDim?" dim":"")});
     rh.appendChild(el("div",{class:"pt"},m.pt));
     rh.appendChild(el("div",{class:"nm"},m.nm));
+
+    var ct=el("div",{class:"ct"});
+    if(inLane.length===0){
+      ct.textContent="Chưa có việc";
+    }else if(uncompleted.length===0){
+      ct.textContent="Đã hoàn thành ("+inLane.length+"/"+inLane.length+")";
+    }else{
+      var txt=uncompleted.length+" / "+inLane.length+" việc chưa xong";
+      if(lateTasks.length>0){
+        ct.innerHTML=txt+', <b class="ct-late">'+lateTasks.length+' quá hạn</b>';
+      }else{
+        ct.textContent=txt;
+      }
+    }
+    rh.appendChild(ct);
     grid.appendChild(rh);
 
     PHASES.forEach(function(p){
-      var cell=el("div",{class:"fl-cell"});
+      var cell=el("div",{class:"fl-cell "+m.c+(isDim?" dim":"")});
       var inPhase=tasks.filter(function(t){return t.ph===p&&laneOf(t)===k});
       inPhase.forEach(function(t){cell.appendChild(flowNode(t))});
       grid.appendChild(cell);
@@ -1593,22 +1684,54 @@ function flowNode(t){
   var done=t.stt==="Hoàn thành";
   var late=isLate(t);
   var pair=isPair(t);
-  var nd=el("div",{class:"fl-node"+(done?" done":"")+(late?" late":"")+(pair?" pair":"")+(t.ms?" ms":""),tabindex:"0",role:"button"});
-  var top=el("div",{class:"fl-top"});
+  var laneK=laneOf(t);
+  var laneType=laneK==="xp"?"xp":(laneK==="bo"?"bo":"cl");
+
+  var nd=el("div",{
+    class:"fl-c "+laneType+(done?" done":"")+(late?" late":"")+(t.ms?" ms":""),
+    tabindex:"0",
+    role:"button"
+  });
+
+  var r=el("div",{class:"r"});
   var n=el("span",{class:"fl-n"},done?"✓":String(stNo(t)));
-  if(t.ms&&!done)n.style.background="var(--gradient)";
-  top.appendChild(n);
-  top.appendChild(el("span",{class:"fl-dt"},whenText(t)));
-  nd.appendChild(top);
+  if(t.ms&&!done){
+    n.style.background="#2563EB";
+  }else if(!done){
+    n.style.background="#1E293B";
+  }
+  r.appendChild(n);
 
-  var tx=el("div",{class:"fl-tx"});
-  tx.innerHTML=kw(t.n||"(chưa đặt tên)");
-  nd.appendChild(tx);
+  var dt=el("span",{class:"dt"},whenText(t));
+  r.appendChild(dt);
 
-  var ft=el("div",{class:"fl-ft"});
-  if(t.pic)ft.appendChild(el("span",{class:"fl-pic"},t.pic));
-  if(isPair(t))ft.appendChild(el("span",{class:"fl-tag with"},"Phối hợp: "+t.dept));
-  ft.appendChild(stTag(t));
+  if(t.ms){
+    r.appendChild(el("span",{class:"star"},"★"));
+  }
+  nd.appendChild(r);
+
+  var nm=el("div",{class:"nm"});
+  nm.innerHTML=kw(t.n||"(chưa đặt tên)");
+  nd.appendChild(nm);
+
+  var ft=el("div",{class:"ft"});
+  if(late){
+    ft.appendChild(el("span",{class:"fl-tag late"},"Quá hạn"));
+  }
+  if(t.stt==="Chưa bắt đầu"){
+    ft.appendChild(el("span",{class:"fl-tag s0"},"• Chưa bắt đầu"));
+  }else if(t.stt==="Đang làm"){
+    ft.appendChild(el("span",{class:"fl-tag s1"},"Đang làm"));
+  }else if(t.stt==="Hoàn thành"){
+    ft.appendChild(el("span",{class:"fl-tag s2"},"✓ Hoàn thành"));
+  }else if(t.stt==="Vướng mắc"){
+    ft.appendChild(el("span",{class:"fl-tag late"},"⚠ Vướng mắc"));
+  }
+
+  if(pair){
+    var pairLabel=(laneType==="xp")?("Phối hợp: "+t.dept):("Cùng "+(t.side||"BP QTTS"));
+    ft.appendChild(el("span",{class:"fl-tag with"},pairLabel));
+  }
   nd.appendChild(ft);
 
   nd.onclick=function(){goTask(t.id)};
