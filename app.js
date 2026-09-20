@@ -661,6 +661,97 @@ function renderCal(){
     c2.appendChild(el("div",{class:"dn n"},String(n1)));
     g.appendChild(c2);
   }
+
+  // Dynamic client name in legend
+  var lgClName = $("#lgClName");
+  if(lgClName){
+    var clientInput = $("[data-k='client']");
+    var cName = (clientInput && clientInput.value ? clientInput.value.trim() : "") || "Nam Á Bank";
+    lgClName.textContent = cName + " thực hiện";
+  }
+
+  // Sắp tới (Upcoming schedule list under calendar)
+  var list = $("#calList");
+  if(list){
+    list.innerHTML = "";
+    var upcoming = [];
+
+    // 1. Tasks in viewed month that are upcoming
+    tasks.forEach(function(t){
+      if(t.stt === "Hoàn thành") return;
+      var d = t.due || t.st;
+      if(t.open === "from" && t.st) d = t.st;
+      if(!d) return;
+
+      var dp = parse(d);
+      if(!dp) return;
+
+      if(dp.getFullYear() === y && dp.getMonth() === m){
+        var isThisMonth = (today().getFullYear() === y && today().getMonth() === m);
+        if(!isThisMonth || d >= tdStr || !isLate(t)){
+          upcoming.push({
+            id: t.id,
+            date: d,
+            n: t.n,
+            ms: !!t.ms,
+            step: tasks.indexOf(t),
+            isLive: false
+          });
+        }
+      }
+    });
+
+    // 2. Go-live milestone
+    if(gv){
+      var gp = parse(gv);
+      if(gp && gp.getFullYear() === y && gp.getMonth() === m){
+        var isThisMonth = (today().getFullYear() === y && today().getMonth() === m);
+        if(!isThisMonth || gv >= tdStr){
+          upcoming.push({
+            date: gv,
+            n: "Go-live chính thức",
+            ms: false,
+            step: 99999,
+            isLive: true
+          });
+        }
+      }
+    }
+
+    // Sort chronologically by date, then by step
+    upcoming.sort(function(a, b){
+      if(a.date !== b.date) return a.date < b.date ? -1 : 1;
+      return a.step - b.step;
+    });
+
+    if(upcoming.length > 0){
+      list.appendChild(el("div", {class: "cal-list-title"}, "SẮP TỚI"));
+      upcoming.forEach(function(item){
+        var row = el("div", {class: "cal-ev", tabindex: "0", role: "button"});
+        
+        var left = el("div", {class: "cal-ev-left"});
+        var dt = el("span", {class: "cal-ev-d"}, dmy(item.date));
+        left.appendChild(dt);
+        
+        var nm = el("span", {class: "cal-ev-name"});
+        nm.innerHTML = item.isLive ? "<b>" + item.n + "</b>" : kw(item.n || "(chưa đặt tên)");
+        left.appendChild(nm);
+        row.appendChild(left);
+        
+        if(item.ms){
+          var right = el("div", {class: "cal-ev-right"});
+          right.appendChild(el("span", {class: "cal-pill-ms"}, "Mốc"));
+          row.appendChild(right);
+        }
+        
+        if(!item.isLive && item.id){
+          row.onclick = function(){ goTask(item.id); };
+          row.onkeydown = function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); goTask(item.id); } };
+        }
+        list.appendChild(row);
+      });
+    }
+  }
 }
 
 function calClass(x){

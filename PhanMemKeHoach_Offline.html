@@ -199,17 +199,31 @@ h4.sub{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--gray
 .cal-more:hover{color:var(--purple-dark);text-decoration:underline}
 
 /* Legend items matching colors */
-.lg-live{background:#00A693!important}
-.lg-ms{background:#7A1FBF!important}
-.lg-cl{background:#C2401F!important}
-.lg-xp{background:#006B5E!important}
+.lg-live{background:#4F46E5!important}
+.lg-ms{background:#C084FC!important}
+.lg-xp{background:#00A693!important}
+.lg-cl{background:#EAB308!important}
 .lg-late{background:#DC2626!important}
-.cal-legend{display:flex;gap:15px;flex-wrap:wrap;font-size:12px;color:var(--gray-500);margin-top:14px;
- padding-top:13px;border-top:1px solid var(--bd)}
-.cal-legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:-1px}
-.cal-list{margin-top:14px;padding-top:13px;border-top:1px solid var(--bd)}
-.cal-ev{display:flex;gap:11px;align-items:baseline;padding:6px 0;font-size:13.5px}
-.cal-ev .d{flex:0 0 46px;font-weight:700;color:var(--purple-dark);font-variant-numeric:tabular-nums}
+.cal-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--gray-500);margin-top:16px;
+ padding-top:14px;border-top:1px solid var(--bd)}
+.cal-legend span{display:inline-flex;align-items:center}
+.cal-legend i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+
+/* Sắp tới (Upcoming Calendar List) */
+.cal-list{margin-top:16px;padding-top:16px;border-top:1px solid var(--bd)}
+.cal-list-title{font-family:var(--font-b);font-size:12px;font-weight:700;color:#64748B;
+  letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px}
+.cal-ev{display:flex;align-items:center;justify-content:space-between;padding:7px 4px;
+  border-radius:6px;cursor:pointer;transition:background .15s}
+.cal-ev:hover{background:rgba(243,232,255,.35)}
+.cal-ev-left{display:flex;align-items:baseline;gap:16px;flex:1;min-width:0}
+.cal-ev-d{flex:0 0 52px;font-family:var(--font-b);font-size:13.5px;font-weight:700;
+  color:#7A1FBF;font-variant-numeric:tabular-nums}
+.cal-ev-name{flex:1;font-family:var(--font-b);font-size:13.5px;color:#1E293B;line-height:1.4}
+.cal-ev-name b{color:#1E293B;font-weight:700}
+.cal-ev-right{flex-shrink:0}
+.cal-pill-ms{display:inline-flex;align-items:center;background:#F3E8FF;color:#7A1FBF;
+  font-family:var(--font-b);font-size:11px;font-weight:600;padding:2px 10px;border-radius:12px}
 
 /* task cards */
 .tasklist{display:flex;flex-direction:column;gap:9px}
@@ -789,11 +803,11 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
     </div>
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-list" id="calList"></div>
-    <div class="cal-legend">
-      <span><i class="lg-live"></i>Go-live mục tiêu</span>
-      <span><i class="lg-ms"></i>Mốc quan trọng (Tím)</span>
-      <span><i class="lg-cl"></i>Đơn vị phối hợp / Chuẩn bị (Cam đào)</span>
-      <span><i class="lg-xp"></i>BP QTTS thực hiện / Hỗ trợ (Xanh bạc hà)</span>
+    <div class="cal-legend" id="calLegend">
+      <span><i class="lg-live"></i>Go-live</span>
+      <span><i class="lg-ms"></i>Mốc quan trọng</span>
+      <span><i class="lg-xp"></i>BP QTTS thực hiện</span>
+      <span><i class="lg-cl" id="lgClName">Nam Á Bank thực hiện</i></span>
       <span><i class="lg-late"></i>Quá hạn</span>
     </div>
   </div>
@@ -1531,6 +1545,97 @@ function renderCal(){
     var c2=el("div",{class:"cal-d other out"});
     c2.appendChild(el("div",{class:"dn n"},String(n1)));
     g.appendChild(c2);
+  }
+
+  // Dynamic client name in legend
+  var lgClName = $("#lgClName");
+  if(lgClName){
+    var clientInput = $("[data-k='client']");
+    var cName = (clientInput && clientInput.value ? clientInput.value.trim() : "") || "Nam Á Bank";
+    lgClName.textContent = cName + " thực hiện";
+  }
+
+  // Sắp tới (Upcoming schedule list under calendar)
+  var list = $("#calList");
+  if(list){
+    list.innerHTML = "";
+    var upcoming = [];
+
+    // 1. Tasks in viewed month that are upcoming
+    tasks.forEach(function(t){
+      if(t.stt === "Hoàn thành") return;
+      var d = t.due || t.st;
+      if(t.open === "from" && t.st) d = t.st;
+      if(!d) return;
+
+      var dp = parse(d);
+      if(!dp) return;
+
+      if(dp.getFullYear() === y && dp.getMonth() === m){
+        var isThisMonth = (today().getFullYear() === y && today().getMonth() === m);
+        if(!isThisMonth || d >= tdStr || !isLate(t)){
+          upcoming.push({
+            id: t.id,
+            date: d,
+            n: t.n,
+            ms: !!t.ms,
+            step: tasks.indexOf(t),
+            isLive: false
+          });
+        }
+      }
+    });
+
+    // 2. Go-live milestone
+    if(gv){
+      var gp = parse(gv);
+      if(gp && gp.getFullYear() === y && gp.getMonth() === m){
+        var isThisMonth = (today().getFullYear() === y && today().getMonth() === m);
+        if(!isThisMonth || gv >= tdStr){
+          upcoming.push({
+            date: gv,
+            n: "Go-live chính thức",
+            ms: false,
+            step: 99999,
+            isLive: true
+          });
+        }
+      }
+    }
+
+    // Sort chronologically by date, then by step
+    upcoming.sort(function(a, b){
+      if(a.date !== b.date) return a.date < b.date ? -1 : 1;
+      return a.step - b.step;
+    });
+
+    if(upcoming.length > 0){
+      list.appendChild(el("div", {class: "cal-list-title"}, "SẮP TỚI"));
+      upcoming.forEach(function(item){
+        var row = el("div", {class: "cal-ev", tabindex: "0", role: "button"});
+        
+        var left = el("div", {class: "cal-ev-left"});
+        var dt = el("span", {class: "cal-ev-d"}, dmy(item.date));
+        left.appendChild(dt);
+        
+        var nm = el("span", {class: "cal-ev-name"});
+        nm.innerHTML = item.isLive ? "<b>" + item.n + "</b>" : kw(item.n || "(chưa đặt tên)");
+        left.appendChild(nm);
+        row.appendChild(left);
+        
+        if(item.ms){
+          var right = el("div", {class: "cal-ev-right"});
+          right.appendChild(el("span", {class: "cal-pill-ms"}, "Mốc"));
+          row.appendChild(right);
+        }
+        
+        if(!item.isLive && item.id){
+          row.onclick = function(){ goTask(item.id); };
+          row.onkeydown = function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); goTask(item.id); } };
+        }
+        list.appendChild(row);
+      });
+    }
   }
 }
 
