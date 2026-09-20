@@ -149,35 +149,61 @@ h4.sub{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--gray
 .cal-nav button{width:31px;height:31px;border-radius:var(--pill);border:1px solid var(--bd);background:#fff;
  cursor:pointer;color:var(--gray-500);font-size:14px;line-height:1;transition:all .2s}
 .cal-nav button:hover{border-color:var(--green);color:var(--green)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.cal-dow{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--gray-400);
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-dow,.cal-dh{font-family:var(--font-b);font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--gray-400);
  text-align:center;padding:5px 0}
-.cal-d{border-radius:10px;padding:5px 6px;font-size:12px;position:relative;
- border:1px solid transparent;min-height:104px;background:#fff;overflow:hidden}
-.cal-d.out{opacity:.4}
-.cal-d.out .dn{color:var(--gray-400)}
+.cal-d{border-radius:10px;padding:7px 8px;font-size:12px;position:relative;
+ border:1px solid #F1F5F9;min-height:108px;background:#fff;overflow:hidden;transition:border-color .2s ease,box-shadow .2s ease}
+.cal-d:hover{border-color:var(--bd)}
+.cal-d.out,.cal-d.other{opacity:.5}
+.cal-d.out .dn,.cal-d.out .n,.cal-d.other .dn,.cal-d.other .n{color:#94A3B8!important;font-weight:500}
 .cal-d.wk{background:#FBFCFB}
-.cal-d.today{border-color:var(--ink)}
-.cal-d.today .dn{background:var(--ink);color:#fff;border-radius:var(--pill);padding:1px 7px}
-.cal-d.liveday{background:linear-gradient(160deg,rgba(176,65,255,.10),rgba(0,166,147,.10));
- border-color:rgba(176,65,255,.35)}
-.cal-d .dn{font-size:12px;font-weight:600;display:inline-block;margin-bottom:4px}
-.cal-ch{display:block;width:100%;text-align:left;border:none;font-family:var(--font-b);
- font-size:10.5px;line-height:1.3;padding:3px 6px;border-radius:5px;margin-bottom:2px;
- white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.ch-live{background:var(--gradient);color:#fff;font-weight:700}
-.ch-ms{background:rgba(176,65,255,.13);color:var(--purple-dark);font-weight:600}
-.ch-xp{background:rgba(0,166,147,.13);color:var(--green-dark)}
-.ch-cl{background:rgba(255,193,7,.20);color:#8a6100}
-.ch-bo{background:var(--gray-100);color:var(--gray-500)}
-.ch-late{background:var(--red-bg);color:var(--red);font-weight:600}
-.cal-more{font-size:10px;color:var(--gray-500);padding:1px 6px;cursor:pointer}
-.cal-more:hover{color:var(--purple-dark)}
-.lg-live{background:linear-gradient(135deg,#B041FF,#00A693)}
-.lg-ms{background:rgba(176,65,255,.5)}
-.lg-xp{background:rgba(0,166,147,.5)}
-.lg-cl{background:rgba(255,193,7,.7)}
-.lg-late{background:var(--red)}
+.cal-d.today{border-color:#334155}
+.cal-d.today .dn,.cal-d.today .n{background:#0F172A;color:#fff;border-radius:var(--pill);padding:2px 8px;font-size:13px}
+.cal-d.liveday{background:#FAF5FF!important;border:1.5px solid #C084FC!important;border-radius:12px;box-shadow:0 3px 12px rgba(176,65,255,.12)!important}
+.cal-d .dn,.cal-d .n{font-family:var(--font-b);font-size:15px;font-weight:700;color:#1E293B;display:inline-block;margin-bottom:6px;line-height:1}
+
+/* Note chip styles & typography matching sample image */
+.cal-ch,.cal-pill{display:block;width:100%;text-align:left;border:none;font-family:var(--font-b);
+ font-size:11.5px;font-weight:600;line-height:1.35;letter-spacing:-0.01em;padding:4px 8px;border-radius:6px;margin-bottom:3px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;box-sizing:border-box;
+ transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease;-webkit-font-smoothing:antialiased}
+.cal-ch:hover,.cal-pill:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+
+/* 1. Peach / Warm Orange (Khởi động, Đơn vị phối hợp, Chuẩn bị, Dữ liệu) */
+.ch-cl,.cal-pill.ch-cl{background:#FFEFEA!important;color:#C2401F!important;font-weight:600}
+.ch-cl:hover,.cal-pill.ch-cl:hover{background:#FDDCD3!important}
+
+/* 2. Soft Violet / Lavender Purple (Mốc quan trọng, Cấu hình, Ký kết, Đào tạo) */
+.ch-ms,.cal-pill.ch-ms,.cal-pill.ms{background:#F3E8FF!important;color:#7A1FBF!important;font-weight:600}
+.ch-ms:hover,.cal-pill.ch-ms:hover,.cal-pill.ms:hover{background:#E9D5FF!important}
+
+/* 3. Soft Cool Gray (BLĐ, Pháp chế, Rà soát hợp đồng, Biểu mẫu) */
+.ch-bo,.cal-pill.ch-bo{background:#F1F5F9!important;color:#475569!important;font-weight:500}
+.ch-bo:hover,.cal-pill.ch-bo:hover{background:#E2E8F0!important}
+
+/* 4. Solid Teal Green (Go-live mục tiêu) */
+.ch-live,.cal-pill.live,.cal-pill.ch-live{background:#00A693!important;color:#fff!important;font-weight:700!important;box-shadow:0 2px 6px rgba(0,166,147,.28)}
+.ch-live:hover,.cal-pill.live:hover{background:#008B7B!important}
+
+/* 5. Soft Mint Green (BP QTTS thực hiện, Hỗ trợ sau triển khai) */
+.ch-xp,.cal-pill.ch-xp{background:#D1FAE5!important;color:#006B5E!important;font-weight:600}
+.ch-xp:hover,.cal-pill.ch-xp:hover{background:#A7F3D0!important}
+
+/* 6. Soft Light Red (Quá hạn) */
+.ch-late,.cal-pill.late,.cal-pill.ch-late{background:#FEE2E2!important;color:#DC2626!important;font-weight:600}
+.ch-late:hover,.cal-pill.late:hover{background:#FECACA!important}
+
+/* Overflow text */
+.cal-more{font-family:var(--font-b);font-size:11px;font-weight:500;color:#64748B;padding:2px 4px;margin-top:3px;cursor:pointer;display:inline-block;border-radius:4px;transition:color .15s}
+.cal-more:hover{color:var(--purple-dark);text-decoration:underline}
+
+/* Legend items matching colors */
+.lg-live{background:#00A693!important}
+.lg-ms{background:#7A1FBF!important}
+.lg-cl{background:#C2401F!important}
+.lg-xp{background:#006B5E!important}
+.lg-late{background:#DC2626!important}
 .cal-legend{display:flex;gap:15px;flex-wrap:wrap;font-size:12px;color:var(--gray-500);margin-top:14px;
  padding-top:13px;border-top:1px solid var(--bd)}
 .cal-legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:-1px}
@@ -239,6 +265,18 @@ select.pill:focus{outline:none;box-shadow:0 0 0 3px rgba(0,166,147,.18)}
 .search-box{display:inline-flex;align-items:center;background:#fff;border:1.5px solid var(--bd);border-radius:var(--pill);padding:2px 12px;gap:6px;font-size:13px}
 .search-box input{border:none;outline:none;background:transparent;font-family:var(--font-b);font-size:13px;padding:6px 0;width:180px;color:var(--ink)}
 .search-box svg{width:14px;height:14px;color:var(--gray-400)}
+
+/* Hạng mục chờ xử lý (matching user sample image) */
+.dept-group-wrap{padding:12px 0;border-bottom:1px solid var(--bd)}
+.dept-group-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.pill-overdue{display:inline-flex;align-items:center;font-family:var(--font-b);font-size:12px;font-weight:600;padding:3px 12px;border-radius:var(--pill);background:#FFEFEA;color:#C2401F}
+.dept-more-cnt{margin-left:auto;font-family:var(--font-b);font-size:12px;font-weight:500;color:#94A3B8;white-space:nowrap}
+.dept-task-row{display:flex;align-items:baseline;gap:14px;padding:5px 0;cursor:pointer;transition:opacity .15s ease}
+.dept-task-row:hover .dept-nm{color:var(--ink);text-decoration:underline}
+.dept-dt{flex:0 0 52px;font-family:var(--font-b);font-size:13.5px;font-weight:700;color:#7A1FBF;font-variant-numeric:tabular-nums;line-height:1.4}
+.dept-dt.late{color:#C2401F!important}
+.dept-nm{flex:1;font-family:var(--font-b);font-size:13.5px;color:#334155;line-height:1.5}
+.dept-nm b{font-weight:700;color:#0F172A}
 
 /* docs */
 .doc{background:var(--white);border:1px solid var(--bd);border-radius:var(--r-md);padding:19px 21px;
@@ -728,10 +766,10 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-list" id="calList"></div>
     <div class="cal-legend">
-      <span><i class="lg-live"></i>Go-live</span>
-      <span><i class="lg-ms"></i>Mốc quan trọng</span>
-      <span><i class="lg-xp"></i>BP QTTS thực hiện</span>
-      <span><i class="lg-cl"></i>Đơn vị phối hợp</span>
+      <span><i class="lg-live"></i>Go-live mục tiêu</span>
+      <span><i class="lg-ms"></i>Mốc quan trọng (Tím)</span>
+      <span><i class="lg-cl"></i>Đơn vị phối hợp / Chuẩn bị (Cam đào)</span>
+      <span><i class="lg-xp"></i>BP QTTS thực hiện / Hỗ trợ (Xanh bạc hà)</span>
       <span><i class="lg-late"></i>Quá hạn</span>
     </div>
   </div>
@@ -917,11 +955,11 @@ function sideCls(s){
   return "p-bo";
 }
 
-var KW=["kế hoạch triển khai","biên bản kết luận",
-"chính sách công tác","cost center","phê duyệt",
+var KW=["kế hoạch triển khai","biên bản kết luận","quy trình xuất hoá đơn",
+"chính sách công tác","phạm vi người dùng","thư giới thiệu","cost center","phê duyệt",
 "người dùng","phạm vi","chính sách","khởi tạo","cấu hình",
 "hợp đồng","Go-live","Golive","đào tạo","truyền thông","bảng kê",
-"đối soát","demo","timeline","chủ trương","vận hành","bàn giao"];
+"đối soát","demo","timeline","chủ trương","vận hành","bàn giao","thanh lý","mua sắm","sửa chữa","chào giá","thống nhất"];
 KW.sort(function(a,b){return b.length-a.length});
 function esc(t){return String(t).replace(/[&<>"]/g,function(c){
  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
@@ -1253,7 +1291,7 @@ function renderOverview(){
     });
   }
 
-  // waiting on whom
+  // waiting on whom (Hạng mục chờ xử lý)
   var bd=$("#byDept");
   if(bd){
     bd.innerHTML="";
@@ -1272,20 +1310,43 @@ function renderOverview(){
       return (da&&da.due||"9")<(db&&db.due||"9")?-1:1;
     });
     if(!keys.length)bd.appendChild(el("div",{class:"empty",style:"padding:14px"},"Không còn hạng mục tồn đọng."));
-    keys.forEach(function(k){
-      var g=groups[k].slice().sort(function(a,b){return (a.due||"9")<(b.due||"9")?-1:1});
-      var wrap=el("div",{style:"padding:10px 0;border-bottom:1px solid var(--gray-100)"});
-      var hd=el("div",{style:"display:flex;align-items:center;gap:8px;margin-bottom:6px"});
-      var pillCls = (k==="BP QTTS"||k.indexOf("QTTS")>=0||k.indexOf("HCQT")>=0) ? "p-xp" : (k==="BLĐ" ? "p-bo" : "p-cl");
+    keys.forEach(function(k, ki){
+      var g=groups[k].slice().sort(function(a,b){
+        var la=isLate(a), lb=isLate(b);
+        if(la!==lb) return la ? -1 : 1;
+        return (a.due||"9")<(b.due||"9")?-1:1;
+      });
+      var lateCount = g.filter(isLate).length;
+      var isLast = (ki === keys.length - 1);
+      var wrap=el("div",{class:"dept-group-wrap",style:isLast?"border-bottom:none":""});
+      
+      // Header row with department pill, overdue pill and overflow count
+      var hd=el("div",{class:"dept-group-hd"});
+      var pillCls = (k==="BP QTTS"||k.indexOf("QTTS")>=0||k.indexOf("HCQT")>=0||k==="Xperise") ? "p-xp" : (k==="BLĐ"||k==="Hai bên" ? "p-bo" : "p-cl");
       hd.appendChild(el("span",{class:"pill "+pillCls},k));
-      hd.appendChild(el("span",{style:"font-size:12px;color:var(--gray-500)"},g.length+" việc"));
+      
+      if(lateCount > 0){
+        hd.appendChild(el("span",{class:"pill-overdue"},lateCount+" hạng mục quá hạn"));
+      }
+      
+      var shownCount = 2;
+      if(g.length > shownCount){
+        var moreSpan = el("span",{class:"dept-more-cnt"},"+"+(g.length - shownCount)+" hạng mục khác");
+        hd.appendChild(moreSpan);
+      }
       wrap.appendChild(hd);
-      g.slice(0,3).forEach(function(t){
-        var r=el("div",{style:"display:flex;align-items:center;gap:8px;font-size:13px;padding:3px 0"});
-        r.appendChild(el("span",{style:"color:var(--gray-400)"},"·"));
-        var nm=el("span",{style:"flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"},t.n);
-        r.appendChild(nm);
-        if(t.due)r.appendChild(el("span",{style:"color:"+(isLate(t)?"var(--red)":"var(--gray-400)")+";font-size:11.5px"},dmy(t.due)));
+      
+      // Task rows with date on left and bold keywords on right
+      g.slice(0, shownCount).forEach(function(t){
+        var r=el("div",{class:"dept-task-row"});
+        var dtSpan=el("span",{class:"dept-dt"+(isLate(t)?" late":"")}, t.due ? dmy(t.due) : "—");
+        r.appendChild(dtSpan);
+        
+        var nmSpan=el("span",{class:"dept-nm"});
+        nmSpan.innerHTML=kw(t.n || "(chưa đặt tên)");
+        r.appendChild(nmSpan);
+        
+        r.onclick=function(){ goTask(t.id); };
         wrap.appendChild(r);
       });
       bd.appendChild(wrap);
@@ -1314,14 +1375,14 @@ function renderCal(){
   var y=calRef.getFullYear(),m=calRef.getMonth();
   var cTit=$("#calTitle");if(cTit)cTit.textContent=MON[m]+" "+y;
   var g=$("#calGrid");if(!g)return;g.innerHTML="";
-  DOW.forEach(function(d){g.appendChild(el("div",{class:"cal-dh"},d))});
+  DOW.forEach(function(d){g.appendChild(el("div",{class:"cal-dow cal-dh"},d))});
   var first=new Date(y,m,1);
   var fDay=(first.getDay()+6)%7;
   var daysIn=new Date(y,m+1,0).getDate();
   var prevDays=new Date(y,m,0).getDate();
   for(var p=fDay-1;p>=0;p--){
-    var c=el("div",{class:"cal-d other"});
-    c.appendChild(el("div",{class:"n"},String(prevDays-p)));
+    var c=el("div",{class:"cal-d other out"});
+    c.appendChild(el("div",{class:"dn n"},String(prevDays-p)));
     g.appendChild(c);
   }
 
@@ -1333,13 +1394,16 @@ function renderCal(){
     var ds=iso(cur);
     var cell=el("div",{class:"cal-d"});
     if(ds===tdStr)cell.classList.add("today");
-    cell.appendChild(el("div",{class:"n"},String(day)));
+    if(gv&&ds===gv)cell.classList.add("liveday");
+    cell.appendChild(el("div",{class:"dn n"},String(day)));
 
     var onThisDay=[];
-    if(gv&&ds===gv)onThisDay.push({live:true,txt:"Go-live"});
+    if(gv&&ds===gv)onThisDay.push({live:true,txt:"Go-live chính thức"});
     tasks.forEach(function(t){
-      if(t.stt==="Hoàn thành")return;
-      if(t.due===ds||(!t.due&&t.st===ds)||t.open==="from"&&t.st<=ds){
+      var matchDue = (t.due === ds);
+      var matchSt = (t.st === ds);
+      var matchRange = (t.open === "from" && t.st <= ds);
+      if(matchDue || matchSt || matchRange){
         onThisDay.push(t);
       }
     });
@@ -1347,17 +1411,28 @@ function renderCal(){
     onThisDay.slice(0,3).forEach(function(x){
       var pill;
       if(x.live){
-        pill=el("div",{class:"cal-pill live"},"★ Go-live");
+        pill=el("button",{class:"cal-ch cal-pill ch-live live",type:"button"},x.txt||"Go-live chính thức");
+        pill.title="Mốc Go-live mục tiêu: "+ds;
       }else{
-        var cls="cal-pill "+calClass(x);
-        pill=el("div",{class:cls},x.n||"(chưa đặt tên)");
-        pill.title=(x.ms?"[Mốc] ":"")+(x.n||"")+" ("+x.side+")";
+        var clsName=calClass(x);
+        pill=el("button",{class:"cal-ch cal-pill "+clsName,type:"button"},x.n||"(chưa đặt tên)");
+        pill.title=(x.ms?"[Mốc quan trọng] ":"")+(x.n||"")+" ("+(x.side||"")+")";
         pill.onclick=(function(task){return function(e){e.stopPropagation();goTask(task.id)}})(x);
       }
       cell.appendChild(pill);
     });
     if(onThisDay.length>3){
-      cell.appendChild(el("div",{class:"cal-more"},"+"+(onThisDay.length-3)));
+      var moreCount=onThisDay.length-3;
+      var moreEl=el("div",{class:"cal-more"},"+"+moreCount+" hạng mục");
+      moreEl.onclick=function(){
+        TABS.forEach(function(x,j){
+          var panel=document.getElementById(x[0]);
+          if(panel)panel.classList.toggle("on",x[0]==="p2");
+          if(tabsBox.children[j])tabsBox.children[j].setAttribute("aria-current",x[0]==="p2"?"true":"false");
+        });
+        window.scrollTo(0,0);
+      };
+      cell.appendChild(moreEl);
     }
     g.appendChild(cell);
   }
@@ -1365,18 +1440,36 @@ function renderCal(){
   var totalCells=fDay+daysIn;
   var nextCells=(7-(totalCells%7))%7;
   for(var n1=1;n1<=nextCells;n1++){
-    var c2=el("div",{class:"cal-d other"});
-    c2.appendChild(el("div",{class:"n"},String(n1)));
+    var c2=el("div",{class:"cal-d other out"});
+    c2.appendChild(el("div",{class:"dn n"},String(n1)));
     g.appendChild(c2);
   }
 }
 
 function calClass(x){
-  if(isLate(x))return "late";
-  if(x.ms)return "ms";
-  if(x.side && (x.side.indexOf("QTTS")>=0 || x.side.indexOf("HCQT")>=0))return "ch-xp";
-  if(x.side==="Đối tác")return "ch-cl";
-  return "ch-bo";
+  if(isLate(x)) return "ch-late late";
+  var nLower = (x.n || "").toLowerCase();
+  var phLower = (x.ph || "").toLowerCase();
+  
+  // Mint green for support after go-live or post-deployment
+  if(nLower.indexOf("hỗ trợ") >= 0 || nLower.indexOf("sau triển khai") >= 0 || (phLower.indexOf("golive") >= 0 && !x.ms)){
+    return "ch-xp";
+  }
+  // Milestone (purple)
+  if(x.ms) return "ch-ms ms";
+  // BLĐ / Pháp chế / Hợp đồng / Biểu mẫu (gray)
+  if(x.side === "BLĐ" || x.dept === "BLĐ" || x.dept === "Phòng PLTT" || nLower.indexOf("hợp đồng") >= 0 || nLower.indexOf("biểu mẫu") >= 0){
+    return "ch-bo";
+  }
+  // Chuẩn bị / Đơn vị phối hợp / Khởi động / Dữ liệu (peach / warm orange)
+  if(x.ph === "Chuẩn bị" || x.side === "Đối tác" || x.dept === "Đối tác" || (x.dept && x.dept !== "—" && x.dept !== "BP QTTS") || nLower.indexOf("khởi động") >= 0 || nLower.indexOf("biên bản") >= 0 || nLower.indexOf("dữ liệu") >= 0){
+    return "ch-cl";
+  }
+  // BP QTTS implementation (mint green)
+  if(x.side && (x.side.indexOf("QTTS") >= 0 || x.side.indexOf("HCQT") >= 0)){
+    return "ch-xp";
+  }
+  return "ch-cl";
 }
 
 var calPrev=$("#calPrev");if(calPrev)calPrev.onclick=function(){calRef=new Date(calRef.getFullYear(),calRef.getMonth()-1,1);renderCal()};
