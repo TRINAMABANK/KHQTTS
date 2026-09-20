@@ -198,16 +198,17 @@ h4.sub{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--gray
 .cal-more{font-family:var(--font-b);font-size:11px;font-weight:500;color:#64748B;padding:2px 4px;margin-top:3px;cursor:pointer;display:inline-block;border-radius:4px;transition:color .15s}
 .cal-more:hover{color:var(--purple-dark);text-decoration:underline}
 
-/* Legend items matching colors */
-.lg-live{background:linear-gradient(135deg,#6366F1 0%,#06B6D4 100%)!important}
-.lg-ms{background:#C4B5FD!important}
-.lg-xp{background:#7CD4C7!important}
-.lg-cl{background:#FBBF24!important}
-.lg-late{background:#C2401F!important}
-.cal-legend{display:flex;align-items:center;gap:24px;flex-wrap:wrap;font-family:var(--font-b);
+/* Legend items matching colors of responsible units in the roadmap */
+.lg-live{background:linear-gradient(135deg,#7C3AED 0%,#00A693 100%)!important}
+.lg-ms{background:#C084FC!important}
+.lg-xp{background:#00A693!important}
+.lg-cl{background:#A855F7!important}
+.lg-late{background:#EF4444!important}
+.cal-legend{display:flex;align-items:center;gap:22px;flex-wrap:wrap;font-family:var(--font-b);
   font-size:13px;color:#475569;margin-top:16px;padding-top:14px;border-top:1px solid var(--bd)}
-.cal-legend span{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0}
-.cal-legend i{width:10px;height:10px;border-radius:3px;display:inline-block;flex-shrink:0}
+.cal-leg-item{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0}
+.cal-leg-item i{width:11px;height:11px;border-radius:3.5px;display:inline-block;flex-shrink:0}
+.cal-leg-item .leg-txt{display:inline-block;white-space:nowrap;line-height:1}
 
 /* Sắp tới (Upcoming Calendar List) */
 .cal-list{margin-top:16px;padding-top:16px;border-top:1px solid var(--bd)}
@@ -805,11 +806,11 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-list" id="calList"></div>
     <div class="cal-legend" id="calLegend">
-      <span><i class="lg-live"></i>Go-live</span>
-      <span><i class="lg-ms"></i>Mốc quan trọng</span>
-      <span><i class="lg-xp"></i>Xperise thực hiện</span>
-      <span><i class="lg-cl" id="lgClName">Nam Á Bank thực hiện</i></span>
-      <span><i class="lg-late"></i>Quá hạn</span>
+      <span class="cal-leg-item"><i class="lg-live"></i><span class="leg-txt">Go-live</span></span>
+      <span class="cal-leg-item"><i class="lg-ms"></i><span class="leg-txt">Mốc quan trọng</span></span>
+      <span class="cal-leg-item"><i class="lg-xp"></i><span class="leg-txt" id="lgXpName">Xperise thực hiện</span></span>
+      <span class="cal-leg-item"><i class="lg-cl"></i><span class="leg-txt" id="lgClName">Nam Á Bank thực hiện</span></span>
+      <span class="cal-leg-item"><i class="lg-late"></i><span class="leg-txt">Quá hạn</span></span>
     </div>
   </div>
 
