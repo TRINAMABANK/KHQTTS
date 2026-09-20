@@ -170,6 +170,63 @@ function isLate(t){
 
 /* ---------- task card render ---------- */
 function taskCard(t,compact){
+  if(!compact && !isAdmin){
+    var c=el("div",{class:"tk tk-view"+(t.stt==="Hoàn thành"?" done":"")+(isLate(t)?" late":"")+(t.ms?" ms-row":"")});
+    c.dataset.id=t.id;
+    var b=el("div",{class:"tk-b"});
+
+    // Row 1: Step #, Phase badge, Task Name, Host Unit badge, Coordinating Dept badge
+    var r1=el("div",{class:"tk-r1",style:"gap:10px;align-items:center"});
+    r1.appendChild(el("span",{class:"tk-no",title:"Bước "+(tasks.indexOf(t)+1)},t.stt==="Hoàn thành"?"✓":String(tasks.indexOf(t)+1)));
+    r1.appendChild(el("span",{class:"pill p-ph"},t.ph));
+
+    var nm=el("div",{class:"tk-name",style:"flex:1;min-width:0"});
+    var nmText=el("div",{class:"tk-name-txt"});
+    nmText.innerHTML=kw(t.n||"(chưa đặt tên)");
+    nm.appendChild(nmText);
+    r1.appendChild(nm);
+
+    r1.appendChild(el("span",{class:"pill "+sideCls(t.side),title:"Đơn vị chủ trì: "+(t.side||"BP QTTS")},t.side||"BP QTTS"));
+    if(t.dept&&t.dept!=="—")r1.appendChild(el("span",{class:"pill p-bo",title:"Đơn vị phối hợp: "+t.dept},t.dept));
+    b.appendChild(r1);
+
+    // Row 2: Date range, PIC, Milestone, Overdue, Status
+    var r2=el("div",{class:"tk-r2",style:"gap:12px;margin-top:7px;align-items:center"});
+    var dtWrap=el("span",{class:"tk-view-dt"});
+    var dateIcon='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+    var dateStr=(t.st&&t.due&&t.st!==t.due)?(dmy(t.st)+" → "+dmy(t.due)):(t.due?("Hạn "+dmy(t.due)):(t.st?dmy(t.st):"—"));
+    dtWrap.innerHTML=dateIcon+dateStr;
+    r2.appendChild(dtWrap);
+
+    if(t.pic){
+      var picSpan=el("span",{class:"tk-view-pic"});
+      picSpan.textContent="👤 "+t.pic;
+      r2.appendChild(picSpan);
+    }
+    if(t.ms){
+      var msPill=el("span",{class:"pill-ms",style:"background:#F3E8FF;color:#7A1FBF;font-weight:700;padding:2.5px 10px;border-radius:12px;font-size:11.5px"});
+      msPill.textContent="★ Mốc";
+      r2.appendChild(msPill);
+    }
+    if(isLate(t)){
+      var latePill=el("span",{class:"pill",style:"background:#FEE2E2;color:#DC2626;font-weight:600;padding:2px 8px;border-radius:10px;font-size:11px"});
+      latePill.textContent="Quá hạn";
+      r2.appendChild(latePill);
+    }
+    r2.appendChild(stTag(t));
+    b.appendChild(r2);
+
+    // Row 3: Note (Description)
+    if(t.note&&t.note.trim()){
+      var nt=el("div",{class:"tk-note-view"});
+      nt.textContent="📝 "+t.note;
+      b.appendChild(nt);
+    }
+
+    c.appendChild(b);
+    return c;
+  }
+
   var c=el("div",{class:"tk"+(t.stt==="Hoàn thành"?" done":"")+(isLate(t)?" late":"")+(t.ms?" ms-row":"")});
   c.dataset.id=t.id;
   if(!compact){
@@ -1459,7 +1516,10 @@ async function saveStateToServer(state) {
   try {
     var resp = await fetch(base + '/api/data', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-Key': 'admin'
+      },
       body: JSON.stringify(state)
     });
     if (resp.ok) return true;
@@ -1469,7 +1529,10 @@ async function saveStateToServer(state) {
     try {
       var resp2 = await fetch(HOST_DOMAIN + '/api/data', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Key': 'admin'
+        },
         body: JSON.stringify(state)
       });
       return resp2.ok;
@@ -1526,7 +1589,7 @@ async function saveReportToServer(fileName, htmlContent) {
 
 /* ---------- Auto-Save to Host Server & LocalStorage ---------- */
 function autoSave(){
-  if (isInitializing) return;
+  if (isInitializing || !isAdmin) return;
   if (saveTimeout) clearTimeout(saveTimeout);
   saveTimeout = setTimeout(async function(){
     var state = buildState();
@@ -2238,6 +2301,217 @@ function showEmailModal(fileName, clientName, reportUrl){
   };
 }
 
+/* ---------- Admin Mode & Authentication ---------- */
+var isAdmin = false;
+
+function checkAdminAuth(){
+  try {
+    var a = sessionStorage.getItem("qts_admin") || localStorage.getItem("qts_admin");
+    return a === "authenticated" || a === "admin";
+  } catch(e){ return false; }
+}
+
+function setAdminMode(val, skipUrlUpdate){
+  isAdmin = !!val;
+  if(isAdmin){
+    document.body.classList.add("admin-mode");
+    document.body.classList.remove("view-only");
+  } else {
+    document.body.classList.remove("admin-mode");
+    document.body.classList.add("view-only");
+  }
+
+  var btnLogin = $("#btnAdminLogin");
+  if(btnLogin) btnLogin.style.display = isAdmin ? "none" : "inline-flex";
+
+  var topGroup = $("#adminTopGroup");
+  if(topGroup) topGroup.style.display = isAdmin ? "inline-flex" : "none";
+
+  var banner = $("#adminBanner");
+  if(banner) banner.style.display = isAdmin ? "block" : "none";
+
+  var clInput = $('[data-k="client"]');
+  if(clInput) clInput.readOnly = !isAdmin;
+
+  var gvInput = $("#gvInput");
+  if(gvInput) gvInput.disabled = !isAdmin;
+
+  var chipLive = $("#chipLive");
+  if(chipLive) chipLive.title = isAdmin ? "Nhấp để đặt ngày Go-live" : "Mốc Go-live mục tiêu";
+
+  if(!skipUrlUpdate && !window.location.protocol.startsWith("file")){
+    var currentPath = window.location.pathname.toLowerCase();
+    if(isAdmin && currentPath !== "/admin"){
+      try { history.replaceState(null, "", "/admin"); } catch(e){}
+    } else if(!isAdmin && currentPath === "/admin"){
+      try { history.replaceState(null, "", "/"); } catch(e){}
+    }
+  }
+
+  renderPlan();
+  renderFlow();
+  renderOverview();
+  renderNotesView();
+}
+
+function showAdminModal(){
+  var m = $("#adminModal");
+  if(!m) return;
+  m.style.display = "flex";
+  var inp = $("#adminPassword");
+  if(inp){
+    inp.value = "";
+    setTimeout(function(){ inp.focus(); }, 80);
+  }
+  var err = $("#adminLoginError");
+  if(err) err.style.display = "none";
+}
+
+function hideAdminModal(){
+  var m = $("#adminModal");
+  if(!m) return;
+  m.style.display = "none";
+  if(!isAdmin && window.location.pathname.toLowerCase() === "/admin" && !window.location.protocol.startsWith("file")){
+    try { history.pushState(null, "", "/"); } catch(e){}
+  }
+}
+
+function submitAdminLogin(){
+  var inp = $("#adminPassword");
+  var val = (inp && inp.value.trim()) || "";
+  var err = $("#adminLoginError");
+  if(val === "admin"){
+    try {
+      sessionStorage.setItem("qts_admin", "authenticated");
+      localStorage.setItem("qts_admin", "authenticated");
+    } catch(e){}
+    hideAdminModal();
+    setAdminMode(true);
+    showToast("✓ Đăng nhập Quản trị thành công! Bạn có quyền Nhập, Sửa, Xoá.", 3200);
+  } else {
+    if(err){
+      err.textContent = "Mật khẩu không chính xác! Vui lòng nhập mật khẩu: admin";
+      err.style.display = "block";
+    }
+    if(inp){
+      inp.select();
+      inp.focus();
+    }
+  }
+}
+
+function renderNotesView(){
+  var t = $("#notes");
+  if(!t) return;
+  t.classList.toggle("view-only", !isAdmin);
+  var rows = t.querySelectorAll("tbody tr");
+  rows.forEach(function(r){
+    var ta = r.querySelector("textarea");
+    var hasContent = ta && ta.value.trim().length > 0;
+    if(!isAdmin){
+      if(!hasContent){
+        r.classList.add("empty-row");
+      } else {
+        r.classList.remove("empty-row");
+      }
+    } else {
+      r.classList.remove("empty-row");
+    }
+  });
+
+  var idx = 1;
+  rows.forEach(function(r){
+    if(isAdmin || !r.classList.contains("empty-row")){
+      if(r.cells[0]) r.cells[0].textContent = String(idx++);
+    }
+  });
+}
+
+function initAdminState(){
+  var path = window.location.pathname.toLowerCase();
+  var hash = window.location.hash.toLowerCase();
+  var isAdminUrl = (path === "/admin" || path.startsWith("/admin/") || hash === "#admin");
+  var hasAuth = checkAdminAuth();
+
+  if(isAdminUrl){
+    if(hasAuth){
+      setAdminMode(true, true);
+    } else {
+      setAdminMode(false, true);
+      showAdminModal();
+    }
+  } else {
+    setAdminMode(false, true);
+  }
+
+  var btnAdminLogin = $("#btnAdminLogin");
+  if(btnAdminLogin){
+    btnAdminLogin.onclick = function(e){
+      e.preventDefault();
+      if(checkAdminAuth()){
+        setAdminMode(true);
+        showToast("✓ Đã kích hoạt quyền Quản trị (Admin)!", 2500);
+      } else {
+        showAdminModal();
+      }
+    };
+  }
+
+  var adminClose = $("#adminModalClose");
+  if(adminClose) adminClose.onclick = hideAdminModal;
+
+  var adminCancel = $("#adminCancelBtn");
+  if(adminCancel) adminCancel.onclick = hideAdminModal;
+
+  var adminForm = $("#adminLoginForm");
+  if(adminForm){
+    adminForm.onsubmit = function(e){
+      e.preventDefault();
+      submitAdminLogin();
+    };
+  }
+
+  var adminTogglePwd = $("#adminTogglePwd");
+  if(adminTogglePwd){
+    adminTogglePwd.onclick = function(){
+      var inp = $("#adminPassword");
+      if(inp){
+        var isPwd = (inp.type === "password");
+        inp.type = isPwd ? "text" : "password";
+        adminTogglePwd.textContent = isPwd ? "🙈" : "👁";
+      }
+    };
+  }
+
+  var btnLogout = $("#btnLogout");
+  if(btnLogout){
+    btnLogout.onclick = function(){
+      try {
+        sessionStorage.removeItem("qts_admin");
+        localStorage.removeItem("qts_admin");
+      } catch(e){}
+      setAdminMode(false);
+      showToast("ℹ️ Đã chuyển sang chế độ Chỉ xem (View-Only).", 2500);
+    };
+  }
+
+  var btnViewPublic = $("#btnViewPublic");
+  if(btnViewPublic){
+    btnViewPublic.onclick = function(e){
+      e.preventDefault();
+      setAdminMode(false);
+      showToast("ℹ️ Đang hiển thị giao diện xem công khai.", 2000);
+    };
+  }
+
+  var adminModal = $("#adminModal");
+  if(adminModal){
+    adminModal.onclick = function(e){
+      if(e.target === adminModal) hideAdminModal();
+    };
+  }
+}
+
 /* ---------- Init & Restore ---------- */
 seed();
 
@@ -2257,7 +2531,6 @@ async function initApp() {
   }
 
   if (!embeddedLoaded) {
-    // 1. Tải dữ liệu lưu trên máy chủ Host trước tiên
     try {
       serverData = await loadServerState();
     } catch (e) {
@@ -2275,7 +2548,6 @@ async function initApp() {
         badge.style.opacity = "1";
       }
     } else {
-      // 2. Nếu máy chủ chưa có dữ liệu, dùng LocalStorage
       var savedLocal = null;
       try {
         savedLocal = localStorage.getItem("xperise_onboarding_state");
@@ -2285,8 +2557,6 @@ async function initApp() {
         try {
           var parsed = JSON.parse(savedLocal);
           applyState(parsed);
-          // Đồng bộ luôn lên máy chủ Host
-          saveStateToServer(parsed);
         } catch (e) {
           var _gv = $("#gvInput")?$("#gvInput").value:"";
           if (_gv) calRef = parse(_gv);
@@ -2296,14 +2566,12 @@ async function initApp() {
         var _gv2 = $("#gvInput")?$("#gvInput").value:"";
         if (_gv2) calRef = parse(_gv2);
         refresh();
-        // Lưu dữ liệu khởi tạo ban đầu lên máy chủ Host
-        var initState = buildState();
-        saveStateToServer(initState);
       }
     }
   }
 
   isInitializing = false;
+  initAdminState();
 }
 
 initApp();

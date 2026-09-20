@@ -739,6 +739,62 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
   }
 }
 
+/* ===== ADMIN & VIEW-ONLY STYLES ===== */
+.btn-admin-login{display:inline-flex;align-items:center;background:linear-gradient(135deg,#7C3AED 0%,#00A693 100%);color:#fff!important;font-family:var(--font-b);font-size:12px;font-weight:600;padding:6px 13px;border-radius:var(--pill);text-decoration:none;border:none;cursor:pointer;box-shadow:0 2px 6px rgba(124,58,237,.25);transition:all .2s ease;letter-spacing:-0.01em}
+.btn-admin-login:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 4px 10px rgba(124,58,237,.35)}
+.admin-top-group{display:inline-flex;align-items:center;gap:8px}
+.admin-badge{display:inline-flex;align-items:center;gap:6px;background:#FEF3C7;color:#92400E;font-family:var(--font-b);font-size:12px;font-weight:700;padding:4px 11px;border-radius:var(--pill);border:1px solid #FCD34D;letter-spacing:.2px}
+.admin-dot{width:7px;height:7px;border-radius:50%;background:#10B981;box-shadow:0 0 0 2px rgba(16,185,129,.3);animation:pulseAdmin 2s infinite}
+@keyframes pulseAdmin{0%{transform:scale(.95);box-shadow:0 0 0 0 rgba(16,185,129,.7)}70%{transform:scale(1);box-shadow:0 0 0 5px rgba(16,185,129,0)}100%{transform:scale(.95);box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+.btn-logout{color:#DC2626!important;border-color:#FECACA!important;background:#FFF5F5!important}
+.btn-logout:hover{background:#FEE2E2!important;border-color:#F87171!important}
+.btn-view-pub{color:#475569!important;background:#F8FAFC!important;border-color:var(--bd)!important}
+.admin-banner{background:linear-gradient(90deg,#FAF5FF 0%,#F0FDF4 100%);border-bottom:1px solid #E9D5FF;padding:7px 16px;font-family:var(--font-b);font-size:12.5px;color:#4C1D95}
+.admin-banner-in{max-width:var(--mw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.admin-sync-tag{display:inline-flex;align-items:center;font-size:11px;font-weight:600;color:#065F46;background:#D1FAE5;padding:2px 8px;border-radius:6px}
+
+/* View-Only Mode overrides */
+body.view-only #addTask,
+body.view-only #saveProjectBtn,
+body.view-only #addNote,
+body.view-only .tk-h,
+body.view-only .tk-x,
+body.view-only #saveBadge{display:none!important}
+body.view-only #gvInput{pointer-events:none;opacity:0}
+body.view-only [data-k="client"]{border:none!important;background:transparent!important;cursor:default!important;pointer-events:none;font-weight:700}
+body.view-only #notes th:last-child,
+body.view-only #notes td:last-child{display:none!important}
+
+/* View-Only Task Card Styles */
+.tk.tk-view{cursor:default;padding:13px 18px;border-radius:12px}
+.tk.tk-view:hover{box-shadow:0 3px 12px rgba(15,23,42,.05);border-color:#CBD5E1}
+.tk-name-txt{font-family:var(--font-b);font-size:15px;font-weight:600;color:#1E293B;line-height:1.45}
+.tk-view-dt{display:inline-flex;align-items:center;font-family:var(--font-b);font-size:12.5px;font-weight:600;color:#64748B;font-variant-numeric:tabular-nums}
+.tk-view-pic{display:inline-flex;align-items:center;font-family:var(--font-b);font-size:12px;color:#475569;font-weight:500}
+.tk-note-view{font-family:var(--font-b);font-size:13px;color:#64748B;margin-top:6px;padding-left:2px;line-height:1.4}
+
+/* Admin Login Modal */
+.admin-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeInAdmin .2s ease}
+@keyframes fadeInAdmin{from{opacity:0}to{opacity:1}}
+.admin-modal-card{background:#fff;border-radius:18px;box-shadow:0 25px 60px -12px rgba(15,23,42,.35);max-width:440px;width:100%;padding:28px;position:relative;border:1px solid #E2E8F0;animation:scaleUpAdmin .25s ease}
+@keyframes scaleUpAdmin{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.admin-modal-close{position:absolute;top:16px;right:16px;background:#F1F5F9;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:15px;color:#64748B;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.admin-modal-close:hover{background:#E2E8F0;color:#0F172A}
+.admin-modal-header{text-align:center;margin-bottom:22px}
+.admin-modal-icon{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,rgba(124,58,237,.1) 0%,rgba(0,166,147,.1) 100%);color:#7C3AED;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px}
+.admin-modal-header h3{font-family:var(--font-d);font-size:20px;font-weight:700;color:#0F172A;margin:0 0 6px}
+.admin-modal-header p{font-family:var(--font-b);font-size:13.5px;color:#64748B;margin:0;line-height:1.5}
+.admin-field{margin-bottom:20px}
+.admin-field label{display:block;font-family:var(--font-b);font-size:13px;font-weight:600;color:#334155;margin-bottom:7px}
+.admin-input-wrap{position:relative;display:flex;align-items:center}
+.admin-input-wrap input{width:100%;height:44px;padding:0 42px 0 14px;border-radius:10px;border:1.5px solid #CBD5E1;font-family:var(--font-b);font-size:14px;color:#0F172A;transition:border-color .2s,box-shadow .2s;box-sizing:border-box}
+.admin-input-wrap input:focus{outline:none;border-color:#7C3AED;box-shadow:0 0 0 3px rgba(124,58,237,.18)}
+.admin-eye-btn{position:absolute;right:10px;background:transparent;border:none;cursor:pointer;font-size:16px;color:#94A3B8;padding:4px;line-height:1;border-radius:4px}
+.admin-eye-btn:hover{color:#475569}
+.admin-error{font-family:var(--font-b);font-size:12.5px;font-weight:600;color:#DC2626;background:#FEE2E2;padding:6px 10px;border-radius:6px;margin-top:8px}
+.admin-modal-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px}
+.admin-modal-actions button{height:40px;padding:0 18px;font-size:13.5px}
+
 @media print{
   .top,.tabs,.acts,.tk-h,.tk-x,.ms-btn,.fl-units,.search-box{display:none!important}
   .fl-wrap{overflow:visible;box-shadow:none}.fl-lab,.fl-corner{position:static}
@@ -772,11 +828,38 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
   </div>
   <div class="top-acts">
     <span class="save-badge" id="saveBadge">✓ Đã lưu lúc 10:04:19</span>
-    <span class="chip chip-live" id="chipLive" title="Nhấp để đặt ngày Go-live">Go-live 30/09</span>
+    <span class="chip chip-live" id="chipLive" title="Mốc Go-live mục tiêu">Go-live 30/09</span>
     <button class="btn btn-o btn-s" id="save" title="Lưu toàn bộ ứng dụng và dữ liệu ra file HTML">Lưu HTML</button>
     <button class="btn btn-o btn-s" id="exportEmailBtn" title="Xuất file HTML tối ưu đính kèm gửi email">Xuất gửi Email</button>
+
+    <!-- Admin Login Button (Hiển thị ở chế độ Chỉ xem) -->
+    <a href="/admin" class="btn btn-admin-login" id="btnAdminLogin" title="Đăng nhập tài khoản Quản trị để Nhập, Sửa, Xoá dữ liệu">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:4px;vertical-align:-1px">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      Quản trị
+    </a>
+
+    <!-- Admin Status Group (Hiển thị khi đăng nhập quyền Quản trị) -->
+    <div class="admin-top-group" id="adminTopGroup" style="display:none">
+      <span class="admin-badge" title="Đang ở chế độ Quản trị: Toàn quyền Nhập, Sửa, Xoá và Lưu">
+        <span class="admin-dot"></span> Admin
+      </span>
+      <a href="/" class="btn btn-o btn-s btn-view-pub" id="btnViewPublic" title="Chuyển sang chế độ xem công khai (quanlyts.com)">👁 Chỉ xem</a>
+      <button type="button" class="btn btn-o btn-s btn-logout" id="btnLogout" title="Đăng xuất khỏi quyền Quản trị">🚪 Thoát</button>
+    </div>
   </div>
 </div></header>
+
+<div class="admin-banner" id="adminBanner" style="display:none">
+  <div class="admin-banner-in">
+    <span>👑 <b>Chế độ Quản trị viên (/admin):</b> Bạn có toàn quyền <b>Nhập • Sửa • Xoá</b> danh mục kế hoạch và tự động lưu lên máy chủ.</span>
+    <div class="admin-banner-acts">
+      <span class="admin-sync-tag" id="adminSyncTag">⚡ Đồng bộ máy chủ</span>
+    </div>
+  </div>
+</div>
 
 <div class="tabs"><div class="tabs-in" id="tabs"></div></div>
 
@@ -908,7 +991,36 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
   <div class="acts"><button class="btn btn-p" id="addNote">+ Thêm nội dung</button></div>
 </section>
 
-</main>
+<!-- ===== ADMIN LOGIN MODAL ===== -->
+<div class="admin-modal-overlay" id="adminModal" style="display:none">
+  <div class="admin-modal-card" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+    <button class="admin-modal-close" id="adminModalClose" type="button" aria-label="Đóng">✕</button>
+    <div class="admin-modal-header">
+      <div class="admin-modal-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h3 id="adminModalTitle">Đăng Nhập Quản Trị Viên</h3>
+      <p>Truy cập <b>quanlyts.com/admin</b> để kích hoạt quyền <b>Nhập • Sửa • Xoá</b> kế hoạch triển khai.</p>
+    </div>
+    <form id="adminLoginForm" onsubmit="return false;" autocomplete="off">
+      <div class="admin-field">
+        <label for="adminPassword">Mật khẩu Quản trị</label>
+        <div class="admin-input-wrap">
+          <input type="password" id="adminPassword" placeholder="Nhập mật khẩu (pass: admin)..." autocomplete="current-password" autofocus required>
+          <button type="button" id="adminTogglePwd" class="admin-eye-btn" aria-label="Hiện/ẩn mật khẩu" title="Hiện/ẩn mật khẩu">👁</button>
+        </div>
+        <div class="admin-error" id="adminLoginError" style="display:none">Mật khẩu không chính xác! Vui lòng thử lại.</div>
+      </div>
+      <div class="admin-modal-actions">
+        <button type="button" class="btn btn-o" id="adminCancelBtn">Huỷ (Chỉ xem)</button>
+        <button type="submit" class="btn btn-p" id="adminSubmitBtn">Đăng nhập Quản trị</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -1083,6 +1195,63 @@ function isLate(t){
 
 /* ---------- task card render ---------- */
 function taskCard(t,compact){
+  if(!compact && !isAdmin){
+    var c=el("div",{class:"tk tk-view"+(t.stt==="Hoàn thành"?" done":"")+(isLate(t)?" late":"")+(t.ms?" ms-row":"")});
+    c.dataset.id=t.id;
+    var b=el("div",{class:"tk-b"});
+
+    // Row 1: Step #, Phase badge, Task Name, Host Unit badge, Coordinating Dept badge
+    var r1=el("div",{class:"tk-r1",style:"gap:10px;align-items:center"});
+    r1.appendChild(el("span",{class:"tk-no",title:"Bước "+(tasks.indexOf(t)+1)},t.stt==="Hoàn thành"?"✓":String(tasks.indexOf(t)+1)));
+    r1.appendChild(el("span",{class:"pill p-ph"},t.ph));
+
+    var nm=el("div",{class:"tk-name",style:"flex:1;min-width:0"});
+    var nmText=el("div",{class:"tk-name-txt"});
+    nmText.innerHTML=kw(t.n||"(chưa đặt tên)");
+    nm.appendChild(nmText);
+    r1.appendChild(nm);
+
+    r1.appendChild(el("span",{class:"pill "+sideCls(t.side),title:"Đơn vị chủ trì: "+(t.side||"BP QTTS")},t.side||"BP QTTS"));
+    if(t.dept&&t.dept!=="—")r1.appendChild(el("span",{class:"pill p-bo",title:"Đơn vị phối hợp: "+t.dept},t.dept));
+    b.appendChild(r1);
+
+    // Row 2: Date range, PIC, Milestone, Overdue, Status
+    var r2=el("div",{class:"tk-r2",style:"gap:12px;margin-top:7px;align-items:center"});
+    var dtWrap=el("span",{class:"tk-view-dt"});
+    var dateIcon='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+    var dateStr=(t.st&&t.due&&t.st!==t.due)?(dmy(t.st)+" → "+dmy(t.due)):(t.due?("Hạn "+dmy(t.due)):(t.st?dmy(t.st):"—"));
+    dtWrap.innerHTML=dateIcon+dateStr;
+    r2.appendChild(dtWrap);
+
+    if(t.pic){
+      var picSpan=el("span",{class:"tk-view-pic"});
+      picSpan.textContent="👤 "+t.pic;
+      r2.appendChild(picSpan);
+    }
+    if(t.ms){
+      var msPill=el("span",{class:"pill-ms",style:"background:#F3E8FF;color:#7A1FBF;font-weight:700;padding:2.5px 10px;border-radius:12px;font-size:11.5px"});
+      msPill.textContent="★ Mốc";
+      r2.appendChild(msPill);
+    }
+    if(isLate(t)){
+      var latePill=el("span",{class:"pill",style:"background:#FEE2E2;color:#DC2626;font-weight:600;padding:2px 8px;border-radius:10px;font-size:11px"});
+      latePill.textContent="Quá hạn";
+      r2.appendChild(latePill);
+    }
+    r2.appendChild(stTag(t));
+    b.appendChild(r2);
+
+    // Row 3: Note (Description)
+    if(t.note&&t.note.trim()){
+      var nt=el("div",{class:"tk-note-view"});
+      nt.textContent="📝 "+t.note;
+      b.appendChild(nt);
+    }
+
+    c.appendChild(b);
+    return c;
+  }
+
   var c=el("div",{class:"tk"+(t.stt==="Hoàn thành"?" done":"")+(isLate(t)?" late":"")+(t.ms?" ms-row":"")});
   c.dataset.id=t.id;
   if(!compact){
@@ -2372,7 +2541,10 @@ async function saveStateToServer(state) {
   try {
     var resp = await fetch(base + '/api/data', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-Key': 'admin'
+      },
       body: JSON.stringify(state)
     });
     if (resp.ok) return true;
@@ -2382,7 +2554,10 @@ async function saveStateToServer(state) {
     try {
       var resp2 = await fetch(HOST_DOMAIN + '/api/data', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Key': 'admin'
+        },
         body: JSON.stringify(state)
       });
       return resp2.ok;
@@ -2439,7 +2614,7 @@ async function saveReportToServer(fileName, htmlContent) {
 
 /* ---------- Auto-Save to Host Server & LocalStorage ---------- */
 function autoSave(){
-  if (isInitializing) return;
+  if (isInitializing || !isAdmin) return;
   if (saveTimeout) clearTimeout(saveTimeout);
   saveTimeout = setTimeout(async function(){
     var state = buildState();
@@ -3151,6 +3326,217 @@ function showEmailModal(fileName, clientName, reportUrl){
   };
 }
 
+/* ---------- Admin Mode & Authentication ---------- */
+var isAdmin = false;
+
+function checkAdminAuth(){
+  try {
+    var a = sessionStorage.getItem("qts_admin") || localStorage.getItem("qts_admin");
+    return a === "authenticated" || a === "admin";
+  } catch(e){ return false; }
+}
+
+function setAdminMode(val, skipUrlUpdate){
+  isAdmin = !!val;
+  if(isAdmin){
+    document.body.classList.add("admin-mode");
+    document.body.classList.remove("view-only");
+  } else {
+    document.body.classList.remove("admin-mode");
+    document.body.classList.add("view-only");
+  }
+
+  var btnLogin = $("#btnAdminLogin");
+  if(btnLogin) btnLogin.style.display = isAdmin ? "none" : "inline-flex";
+
+  var topGroup = $("#adminTopGroup");
+  if(topGroup) topGroup.style.display = isAdmin ? "inline-flex" : "none";
+
+  var banner = $("#adminBanner");
+  if(banner) banner.style.display = isAdmin ? "block" : "none";
+
+  var clInput = $('[data-k="client"]');
+  if(clInput) clInput.readOnly = !isAdmin;
+
+  var gvInput = $("#gvInput");
+  if(gvInput) gvInput.disabled = !isAdmin;
+
+  var chipLive = $("#chipLive");
+  if(chipLive) chipLive.title = isAdmin ? "Nhấp để đặt ngày Go-live" : "Mốc Go-live mục tiêu";
+
+  if(!skipUrlUpdate && !window.location.protocol.startsWith("file")){
+    var currentPath = window.location.pathname.toLowerCase();
+    if(isAdmin && currentPath !== "/admin"){
+      try { history.replaceState(null, "", "/admin"); } catch(e){}
+    } else if(!isAdmin && currentPath === "/admin"){
+      try { history.replaceState(null, "", "/"); } catch(e){}
+    }
+  }
+
+  renderPlan();
+  renderFlow();
+  renderOverview();
+  renderNotesView();
+}
+
+function showAdminModal(){
+  var m = $("#adminModal");
+  if(!m) return;
+  m.style.display = "flex";
+  var inp = $("#adminPassword");
+  if(inp){
+    inp.value = "";
+    setTimeout(function(){ inp.focus(); }, 80);
+  }
+  var err = $("#adminLoginError");
+  if(err) err.style.display = "none";
+}
+
+function hideAdminModal(){
+  var m = $("#adminModal");
+  if(!m) return;
+  m.style.display = "none";
+  if(!isAdmin && window.location.pathname.toLowerCase() === "/admin" && !window.location.protocol.startsWith("file")){
+    try { history.pushState(null, "", "/"); } catch(e){}
+  }
+}
+
+function submitAdminLogin(){
+  var inp = $("#adminPassword");
+  var val = (inp && inp.value.trim()) || "";
+  var err = $("#adminLoginError");
+  if(val === "admin"){
+    try {
+      sessionStorage.setItem("qts_admin", "authenticated");
+      localStorage.setItem("qts_admin", "authenticated");
+    } catch(e){}
+    hideAdminModal();
+    setAdminMode(true);
+    showToast("✓ Đăng nhập Quản trị thành công! Bạn có quyền Nhập, Sửa, Xoá.", 3200);
+  } else {
+    if(err){
+      err.textContent = "Mật khẩu không chính xác! Vui lòng nhập mật khẩu: admin";
+      err.style.display = "block";
+    }
+    if(inp){
+      inp.select();
+      inp.focus();
+    }
+  }
+}
+
+function renderNotesView(){
+  var t = $("#notes");
+  if(!t) return;
+  t.classList.toggle("view-only", !isAdmin);
+  var rows = t.querySelectorAll("tbody tr");
+  rows.forEach(function(r){
+    var ta = r.querySelector("textarea");
+    var hasContent = ta && ta.value.trim().length > 0;
+    if(!isAdmin){
+      if(!hasContent){
+        r.classList.add("empty-row");
+      } else {
+        r.classList.remove("empty-row");
+      }
+    } else {
+      r.classList.remove("empty-row");
+    }
+  });
+
+  var idx = 1;
+  rows.forEach(function(r){
+    if(isAdmin || !r.classList.contains("empty-row")){
+      if(r.cells[0]) r.cells[0].textContent = String(idx++);
+    }
+  });
+}
+
+function initAdminState(){
+  var path = window.location.pathname.toLowerCase();
+  var hash = window.location.hash.toLowerCase();
+  var isAdminUrl = (path === "/admin" || path.startsWith("/admin/") || hash === "#admin");
+  var hasAuth = checkAdminAuth();
+
+  if(isAdminUrl){
+    if(hasAuth){
+      setAdminMode(true, true);
+    } else {
+      setAdminMode(false, true);
+      showAdminModal();
+    }
+  } else {
+    setAdminMode(false, true);
+  }
+
+  var btnAdminLogin = $("#btnAdminLogin");
+  if(btnAdminLogin){
+    btnAdminLogin.onclick = function(e){
+      e.preventDefault();
+      if(checkAdminAuth()){
+        setAdminMode(true);
+        showToast("✓ Đã kích hoạt quyền Quản trị (Admin)!", 2500);
+      } else {
+        showAdminModal();
+      }
+    };
+  }
+
+  var adminClose = $("#adminModalClose");
+  if(adminClose) adminClose.onclick = hideAdminModal;
+
+  var adminCancel = $("#adminCancelBtn");
+  if(adminCancel) adminCancel.onclick = hideAdminModal;
+
+  var adminForm = $("#adminLoginForm");
+  if(adminForm){
+    adminForm.onsubmit = function(e){
+      e.preventDefault();
+      submitAdminLogin();
+    };
+  }
+
+  var adminTogglePwd = $("#adminTogglePwd");
+  if(adminTogglePwd){
+    adminTogglePwd.onclick = function(){
+      var inp = $("#adminPassword");
+      if(inp){
+        var isPwd = (inp.type === "password");
+        inp.type = isPwd ? "text" : "password";
+        adminTogglePwd.textContent = isPwd ? "🙈" : "👁";
+      }
+    };
+  }
+
+  var btnLogout = $("#btnLogout");
+  if(btnLogout){
+    btnLogout.onclick = function(){
+      try {
+        sessionStorage.removeItem("qts_admin");
+        localStorage.removeItem("qts_admin");
+      } catch(e){}
+      setAdminMode(false);
+      showToast("ℹ️ Đã chuyển sang chế độ Chỉ xem (View-Only).", 2500);
+    };
+  }
+
+  var btnViewPublic = $("#btnViewPublic");
+  if(btnViewPublic){
+    btnViewPublic.onclick = function(e){
+      e.preventDefault();
+      setAdminMode(false);
+      showToast("ℹ️ Đang hiển thị giao diện xem công khai.", 2000);
+    };
+  }
+
+  var adminModal = $("#adminModal");
+  if(adminModal){
+    adminModal.onclick = function(e){
+      if(e.target === adminModal) hideAdminModal();
+    };
+  }
+}
+
 /* ---------- Init & Restore ---------- */
 seed();
 
@@ -3170,7 +3556,6 @@ async function initApp() {
   }
 
   if (!embeddedLoaded) {
-    // 1. Tải dữ liệu lưu trên máy chủ Host trước tiên
     try {
       serverData = await loadServerState();
     } catch (e) {
@@ -3188,7 +3573,6 @@ async function initApp() {
         badge.style.opacity = "1";
       }
     } else {
-      // 2. Nếu máy chủ chưa có dữ liệu, dùng LocalStorage
       var savedLocal = null;
       try {
         savedLocal = localStorage.getItem("xperise_onboarding_state");
@@ -3198,8 +3582,6 @@ async function initApp() {
         try {
           var parsed = JSON.parse(savedLocal);
           applyState(parsed);
-          // Đồng bộ luôn lên máy chủ Host
-          saveStateToServer(parsed);
         } catch (e) {
           var _gv = $("#gvInput")?$("#gvInput").value:"";
           if (_gv) calRef = parse(_gv);
@@ -3209,14 +3591,12 @@ async function initApp() {
         var _gv2 = $("#gvInput")?$("#gvInput").value:"";
         if (_gv2) calRef = parse(_gv2);
         refresh();
-        // Lưu dữ liệu khởi tạo ban đầu lên máy chủ Host
-        var initState = buildState();
-        saveStateToServer(initState);
       }
     }
   }
 
   isInitializing = false;
+  initAdminState();
 }
 
 initApp();

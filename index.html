@@ -42,11 +42,38 @@
   </div>
   <div class="top-acts">
     <span class="save-badge" id="saveBadge">✓ Đã lưu lúc 10:04:19</span>
-    <span class="chip chip-live" id="chipLive" title="Nhấp để đặt ngày Go-live">Go-live 30/09</span>
+    <span class="chip chip-live" id="chipLive" title="Mốc Go-live mục tiêu">Go-live 30/09</span>
     <button class="btn btn-o btn-s" id="save" title="Lưu toàn bộ ứng dụng và dữ liệu ra file HTML">Lưu HTML</button>
     <button class="btn btn-o btn-s" id="exportEmailBtn" title="Xuất file HTML tối ưu đính kèm gửi email">Xuất gửi Email</button>
+
+    <!-- Admin Login Button (Hiển thị ở chế độ Chỉ xem) -->
+    <a href="/admin" class="btn btn-admin-login" id="btnAdminLogin" title="Đăng nhập tài khoản Quản trị để Nhập, Sửa, Xoá dữ liệu">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:4px;vertical-align:-1px">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      Quản trị
+    </a>
+
+    <!-- Admin Status Group (Hiển thị khi đăng nhập quyền Quản trị) -->
+    <div class="admin-top-group" id="adminTopGroup" style="display:none">
+      <span class="admin-badge" title="Đang ở chế độ Quản trị: Toàn quyền Nhập, Sửa, Xoá và Lưu">
+        <span class="admin-dot"></span> Admin
+      </span>
+      <a href="/" class="btn btn-o btn-s btn-view-pub" id="btnViewPublic" title="Chuyển sang chế độ xem công khai (quanlyts.com)">👁 Chỉ xem</a>
+      <button type="button" class="btn btn-o btn-s btn-logout" id="btnLogout" title="Đăng xuất khỏi quyền Quản trị">🚪 Thoát</button>
+    </div>
   </div>
 </div></header>
+
+<div class="admin-banner" id="adminBanner" style="display:none">
+  <div class="admin-banner-in">
+    <span>👑 <b>Chế độ Quản trị viên (/admin):</b> Bạn có toàn quyền <b>Nhập • Sửa • Xoá</b> danh mục kế hoạch và tự động lưu lên máy chủ.</span>
+    <div class="admin-banner-acts">
+      <span class="admin-sync-tag" id="adminSyncTag">⚡ Đồng bộ máy chủ</span>
+    </div>
+  </div>
+</div>
 
 <div class="tabs"><div class="tabs-in" id="tabs"></div></div>
 
@@ -178,7 +205,36 @@
   <div class="acts"><button class="btn btn-p" id="addNote">+ Thêm nội dung</button></div>
 </section>
 
-</main>
+<!-- ===== ADMIN LOGIN MODAL ===== -->
+<div class="admin-modal-overlay" id="adminModal" style="display:none">
+  <div class="admin-modal-card" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+    <button class="admin-modal-close" id="adminModalClose" type="button" aria-label="Đóng">✕</button>
+    <div class="admin-modal-header">
+      <div class="admin-modal-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h3 id="adminModalTitle">Đăng Nhập Quản Trị Viên</h3>
+      <p>Truy cập <b>quanlyts.com/admin</b> để kích hoạt quyền <b>Nhập • Sửa • Xoá</b> kế hoạch triển khai.</p>
+    </div>
+    <form id="adminLoginForm" onsubmit="return false;" autocomplete="off">
+      <div class="admin-field">
+        <label for="adminPassword">Mật khẩu Quản trị</label>
+        <div class="admin-input-wrap">
+          <input type="password" id="adminPassword" placeholder="Nhập mật khẩu (pass: admin)..." autocomplete="current-password" autofocus required>
+          <button type="button" id="adminTogglePwd" class="admin-eye-btn" aria-label="Hiện/ẩn mật khẩu" title="Hiện/ẩn mật khẩu">👁</button>
+        </div>
+        <div class="admin-error" id="adminLoginError" style="display:none">Mật khẩu không chính xác! Vui lòng thử lại.</div>
+      </div>
+      <div class="admin-modal-actions">
+        <button type="button" class="btn btn-o" id="adminCancelBtn">Huỷ (Chỉ xem)</button>
+        <button type="submit" class="btn btn-p" id="adminSubmitBtn">Đăng nhập Quản trị</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script src="app.js?v=2.4"></script>
 </body>

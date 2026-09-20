@@ -68,8 +68,46 @@ const server = http.createServer((req, res) => {
     }
   }
 
-  // API endpoint to POST/SAVE project state to host
+  // API endpoint to verify admin password
+  if (req.method === 'POST' && reqUrl === '/api/admin/verify') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        if (data.password === 'admin') {
+          res.writeHead(200, {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+          });
+          res.end(JSON.stringify({ ok: true, token: 'admin', message: 'Đăng nhập Quản trị thành công' }));
+        } else {
+          res.writeHead(401, {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+          });
+          res.end(JSON.stringify({ ok: false, error: 'Mật khẩu quản trị không chính xác' }));
+        }
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // API endpoint to POST/SAVE project state to host (Requires Admin Auth)
   if (req.method === 'POST' && reqUrl === '/api/data') {
+    const adminKey = req.headers['x-admin-key'] || (req.headers['authorization'] || '').replace('Bearer ', '');
+    if (adminKey !== 'admin') {
+      res.writeHead(401, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      });
+      res.end(JSON.stringify({ error: 'Unauthorized: Cần quyền admin để lưu dữ liệu. Vui lòng đăng nhập tại /admin.' }));
+      return;
+    }
+
     let body = '';
     req.on('data', chunk => { body += chunk; });
     req.on('end', () => {
@@ -130,7 +168,8 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (reqUrl === '/' || reqUrl === '') {
+  // Map /admin, /admin/, and root to /index.html
+  if (reqUrl === '/admin' || reqUrl === '/admin/' || reqUrl === '/admin/index.html' || reqUrl === '/' || reqUrl === '') {
     reqUrl = '/index.html';
   }
 
