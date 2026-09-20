@@ -605,6 +605,7 @@ function renderCal(){
 
   var gv=$("#gvInput")?$("#gvInput").value:"";
   var tdStr=iso(today());
+  var monthTasks=[];
 
   for(var day=1;day<=daysIn;day++){
     var cur=new Date(y,m,day);
@@ -622,6 +623,7 @@ function renderCal(){
       var matchRange = (t.open === "from" && t.st <= ds);
       if(matchDue || matchSt || matchRange){
         onThisDay.push(t);
+        if(monthTasks.indexOf(t) === -1) monthTasks.push(t);
       }
     });
 
@@ -660,14 +662,6 @@ function renderCal(){
     var c2=el("div",{class:"cal-d other out"});
     c2.appendChild(el("div",{class:"dn n"},String(n1)));
     g.appendChild(c2);
-  }
-
-  // Dynamic client name in legend
-  var lgClName = $("#lgClName");
-  if(lgClName){
-    var clientInput = $("[data-k='client']");
-    var cName = (clientInput && clientInput.value ? clientInput.value.trim() : "") || "Nam Á Bank";
-    lgClName.textContent = cName + " thực hiện";
   }
 
   // Sắp tới (Upcoming schedule list under calendar)
@@ -751,6 +745,63 @@ function renderCal(){
         list.appendChild(row);
       });
     }
+  }
+
+  // Dynamic legend: 1. Go-live -> 2. Mốc quan trọng -> 3. Quá hạn -> 4. Đơn vị chủ trì có tên trong lịch -> 5. Đơn vị phối hợp có tên trong lịch
+  var calLeg = $("#calLegend");
+  if(calLeg){
+    calLeg.innerHTML = "";
+
+    function addLegItem(iconCls, labelText){
+      var sp = el("span", {class: "cal-leg-item"});
+      var icon = el("i", {class: iconCls});
+      var txt = el("span", {class: "leg-txt"}, labelText);
+      sp.appendChild(icon);
+      sp.appendChild(txt);
+      calLeg.appendChild(sp);
+    }
+
+    // 1. Go-live
+    addLegItem("lg-live", "Go-live");
+
+    // 2. Mốc quan trọng
+    addLegItem("lg-ms", "Mốc quan trọng");
+
+    // 3. Quá hạn
+    addLegItem("lg-late", "Quá hạn");
+
+    // 4. Các đơn vị chủ trì mà có tên trong lịch
+    var hostUnits = [];
+    monthTasks.forEach(function(t){
+      var u = "";
+      if(t.side && (t.side.indexOf("QTTS") >= 0 || t.side.indexOf("HCQT") >= 0)){
+        u = "BP QTTS";
+      } else if(t.side){
+        u = t.side.trim();
+      }
+      if(u && hostUnits.indexOf(u) === -1){
+        hostUnits.push(u);
+      }
+    });
+    if(hostUnits.length === 0){
+      hostUnits.push("BP QTTS");
+    }
+    hostUnits.forEach(function(u){
+      addLegItem("lg-xp", u + " thực hiện");
+    });
+
+    // 5. Các Đơn vị phối hợp mà có tên trong lịch
+    var coopUnits = [];
+    monthTasks.forEach(function(t){
+      var d = (t.dept && t.dept !== "—") ? t.dept.trim() : "";
+      if(d && d !== "BP QTTS" && hostUnits.indexOf(d) === -1 && coopUnits.indexOf(d) === -1){
+        coopUnits.push(d);
+      }
+    });
+    coopUnits.forEach(function(u){
+      var cls = (u === "BLĐ") ? "lg-bo" : "lg-cl";
+      addLegItem(cls, u + " thực hiện");
+    });
   }
 }
 

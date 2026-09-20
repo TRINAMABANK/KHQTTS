@@ -182,10 +182,11 @@ h4.sub{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--gray
 /* Legend items matching colors of responsible units in the roadmap */
 .lg-live{background:linear-gradient(135deg,#7C3AED 0%,#00A693 100%)!important}
 .lg-ms{background:#C084FC!important}
+.lg-late{background:#EF4444!important}
 .lg-xp{background:#00A693!important}
 .lg-cl{background:#A855F7!important}
-.lg-late{background:#EF4444!important}
-.cal-legend{display:flex;align-items:center;gap:22px;flex-wrap:wrap;font-family:var(--font-b);
+.lg-bo{background:#64748B!important}
+.cal-legend{display:flex;align-items:center;gap:12px 22px;flex-wrap:wrap;font-family:var(--font-b);
   font-size:13px;color:#475569;margin-top:16px;padding-top:14px;border-top:1px solid var(--bd)}
 .cal-leg-item{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0}
 .cal-leg-item i{width:11px;height:11px;border-radius:3.5px;display:inline-block;flex-shrink:0}
