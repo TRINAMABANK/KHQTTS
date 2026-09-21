@@ -245,10 +245,23 @@ h4.sub{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--gray
 .tk.done{background:var(--soft-white);border-color:transparent}
 .tk.done .tk-name input{color:var(--gray-500);text-decoration:line-through}
 .tk.late{border-color:#F0C4B6;background:#FFFBFA}
-.tk-h{cursor:grab;color:var(--gray-400);font-size:15px;padding-top:5px;user-select:none;flex:0 0 auto}
+.tk-move-ctrl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:0 0 24px;user-select:none;margin-top:2px}
+.tk-move-btn{width:22px;height:18px;display:flex;align-items:center;justify-content:center;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:4px;color:#64748B;cursor:pointer;padding:0;line-height:1;transition:all .15s ease}
+.tk-move-btn:hover:not(:disabled){background:#7C3AED;border-color:#7C3AED;color:#fff;transform:scale(1.1)}
+.tk-move-btn:active:not(:disabled){transform:scale(.95)}
+.tk-move-btn:disabled{opacity:.2;cursor:not-allowed;background:transparent;border-color:transparent}
+.tk-h{cursor:grab;color:#94A3B8;font-size:15px;line-height:1;padding:2px 3px;border-radius:4px;user-select:none;transition:all .15s}
+.tk-h:hover{color:#7C3AED;background:#F5E8FF}
 .tk-h:active{cursor:grabbing}
-.tk.dragging{opacity:.4}
-.tk.over{border-top:2px solid var(--purple)}
+.tk.dragging{opacity:.35;transform:scale(.99);border-color:#7C3AED!important;box-shadow:0 6px 18px rgba(124,58,237,.2)!important}
+.tk.over-top{border-top:3px solid #7C3AED!important;box-shadow:0 -4px 12px rgba(124,58,237,.2)!important}
+.tk.over-bottom{border-bottom:3px solid #7C3AED!important;box-shadow:0 4px 12px rgba(124,58,237,.2)!important}
+.tk.just-moved{animation:justMovedGlow 1.2s ease}
+@keyframes justMovedGlow{
+  0%{transform:scale(1.02);box-shadow:0 0 0 4px rgba(124,58,237,.35);border-color:#7C3AED}
+  50%{transform:scale(1.01);box-shadow:0 0 0 2px rgba(124,58,237,.2);border-color:#7C3AED}
+  100%{transform:scale(1);box-shadow:none}
+}
 .tk-b{flex:1;min-width:0}
 .tk-r1{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:7px}
 .tk-name{flex:1 1 260px;min-width:200px}
@@ -738,7 +751,6 @@ details.faq .b{padding:14px 18px 16px 45px;font-size:14px;color:var(--gray-500)}
 body.view-only #addTask,
 body.view-only #saveProjectBtn,
 body.view-only #addNote,
-body.view-only .tk-h,
 body.view-only .tk-x,
 body.view-only #saveBadge{display:none!important}
 body.view-only #gvInput{pointer-events:none;opacity:0}

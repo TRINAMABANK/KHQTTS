@@ -168,11 +168,114 @@ function isLate(t){
   var d=parse(t.due);return d&&d<today();
 }
 
+/* ---------- Task Move & Reorder Controller ---------- */
+function moveTask(id, dir){
+  var visibleList = tasks.slice();
+  if(filt) visibleList = visibleList.filter(function(x){ return x.ph === filt; });
+  if(searchKeyword){
+    var kw = searchKeyword.toLowerCase();
+    visibleList = visibleList.filter(function(x){
+      return (x.n && x.n.toLowerCase().indexOf(kw) >= 0) ||
+             (x.pic && x.pic.toLowerCase().indexOf(kw) >= 0) ||
+             (x.dept && x.dept.toLowerCase().indexOf(kw) >= 0) ||
+             (x.side && x.side.toLowerCase().indexOf(kw) >= 0) ||
+             (x.note && x.note.toLowerCase().indexOf(kw) >= 0);
+    });
+  }
+
+  var vIdx = visibleList.findIndex(function(x){ return x.id === id; });
+  if(vIdx < 0) return;
+  var targetVIdx = vIdx + dir;
+  if(targetVIdx < 0 || targetVIdx >= visibleList.length) return;
+
+  var targetTask = visibleList[targetVIdx];
+  var fromGlobal = tasks.findIndex(function(x){ return x.id === id; });
+  var toGlobal = tasks.findIndex(function(x){ return x.id === targetTask.id; });
+  if(fromGlobal < 0 || toGlobal < 0) return;
+
+  var moved = tasks.splice(fromGlobal, 1)[0];
+  var newGlobalTarget = tasks.findIndex(function(x){ return x.id === targetTask.id; });
+  var insertPos = (dir > 0) ? newGlobalTarget + 1 : newGlobalTarget;
+  tasks.splice(insertPos, 0, moved);
+
+  refresh();
+
+  setTimeout(function(){
+    var card = document.querySelector('.tk[data-id="' + id + '"]');
+    if(card){
+      card.classList.add("just-moved");
+      card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      setTimeout(function(){
+        card.classList.remove("just-moved");
+      }, 1200);
+    }
+  }, 60);
+
+  var taskName = moved.n ? (moved.n.length > 28 ? moved.n.substring(0, 28) + "..." : moved.n) : "công việc";
+  var dirText = (dir < 0) ? "lên bước " : "xuống bước ";
+  var newStep = tasks.indexOf(moved) + 1;
+  showToast("✓ Đã chuyển " + dirText + newStep + ": " + taskName, 2200);
+}
+
+function createMoveCtrl(t){
+  var moveCtrl = el("div", {class: "tk-move-ctrl"});
+
+  var visibleList = tasks.slice();
+  if(filt) visibleList = visibleList.filter(function(x){ return x.ph === filt; });
+  if(searchKeyword){
+    var kw = searchKeyword.toLowerCase();
+    visibleList = visibleList.filter(function(x){
+      return (x.n && x.n.toLowerCase().indexOf(kw) >= 0) ||
+             (x.pic && x.pic.toLowerCase().indexOf(kw) >= 0) ||
+             (x.dept && x.dept.toLowerCase().indexOf(kw) >= 0) ||
+             (x.side && x.side.toLowerCase().indexOf(kw) >= 0) ||
+             (x.note && x.note.toLowerCase().indexOf(kw) >= 0);
+    });
+  }
+  var vIdx = visibleList.indexOf(t);
+
+  var btnUp = el("button", {
+    class: "tk-move-btn tk-move-up",
+    type: "button",
+    title: "Di chuyển lên trên (▲)"
+  });
+  btnUp.innerHTML = '<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M12 4l-8 8h16z"/></svg>';
+  if(vIdx <= 0) btnUp.disabled = true;
+  btnUp.onclick = function(e){
+    e.stopPropagation();
+    moveTask(t.id, -1);
+  };
+  moveCtrl.appendChild(btnUp);
+
+  var handle = el("div", {
+    class: "tk-h",
+    title: "Kéo thả để đổi thứ tự công việc"
+  }, "⠿");
+  moveCtrl.appendChild(handle);
+
+  var btnDown = el("button", {
+    class: "tk-move-btn tk-move-down",
+    type: "button",
+    title: "Di chuyển xuống dưới (▼)"
+  });
+  btnDown.innerHTML = '<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M12 20l8-8H4z"/></svg>';
+  if(vIdx < 0 || vIdx >= visibleList.length - 1) btnDown.disabled = true;
+  btnDown.onclick = function(e){
+    e.stopPropagation();
+    moveTask(t.id, 1);
+  };
+  moveCtrl.appendChild(btnDown);
+
+  return moveCtrl;
+}
+
 /* ---------- task card render ---------- */
 function taskCard(t,compact){
   if(!compact && !isAdmin){
     var c=el("div",{class:"tk tk-view"+(t.stt==="Hoàn thành"?" done":"")+(isLate(t)?" late":"")+(t.ms?" ms-row":"")});
     c.dataset.id=t.id;
+    c.draggable=true;
+    c.appendChild(createMoveCtrl(t));
     var b=el("div",{class:"tk-b"});
 
     // Row 1: Step #, Phase badge, Task Name, Host Unit badge, Coordinating Dept badge
@@ -231,7 +334,7 @@ function taskCard(t,compact){
   c.dataset.id=t.id;
   if(!compact){
     c.draggable=true;
-    c.appendChild(el("div",{class:"tk-h",title:"Kéo để đổi thứ tự"},"⠿"));
+    c.appendChild(createMoveCtrl(t));
   }
   var b=el("div",{class:"tk-b"});
 
@@ -350,6 +453,10 @@ function stClass(s){
 /* ---------- drag & drop reorder ---------- */
 var dragId=null;
 document.addEventListener("dragstart",function(e){
+  if(e.target.closest("input, select, textarea, button:not(.tk-move-btn)")){
+    e.preventDefault();
+    return;
+  }
   var c=e.target.closest(".tk");
   if(!c||!c.dataset.id)return;
   dragId=+c.dataset.id;
@@ -357,41 +464,84 @@ document.addEventListener("dragstart",function(e){
   e.dataTransfer.effectAllowed="move";
   e.dataTransfer.setData("text/plain",c.dataset.id);
 });
+
 document.addEventListener("dragend",function(e){
-  var c=e.target.closest(".tk");
-  if(c)c.classList.remove("dragging");
-  document.querySelectorAll(".tk.over").forEach(function(x){x.classList.remove("over")});
+  document.querySelectorAll(".tk.dragging").forEach(function(x){ x.classList.remove("dragging"); });
+  document.querySelectorAll(".tk.over, .tk.over-top, .tk.over-bottom").forEach(function(x){
+    x.classList.remove("over", "over-top", "over-bottom");
+  });
   dragId=null;
 });
+
 document.addEventListener("dragover",function(e){
   var c=e.target.closest(".tk");
   if(!c||!c.dataset.id||+c.dataset.id===dragId)return;
   e.preventDefault();
   e.dataTransfer.dropEffect="move";
-  document.querySelectorAll(".tk.over").forEach(function(x){if(x!==c)x.classList.remove("over")});
-  c.classList.add("over");
+  
+  var r=c.getBoundingClientRect();
+  var isAfter=(e.clientY-r.top)/r.height>.5;
+  
+  document.querySelectorAll(".tk.over-top, .tk.over-bottom").forEach(function(x){
+    if(x!==c){
+      x.classList.remove("over", "over-top", "over-bottom");
+    }
+  });
+
+  if(isAfter){
+    c.classList.remove("over-top");
+    c.classList.add("over-bottom");
+  } else {
+    c.classList.remove("over-bottom");
+    c.classList.add("over-top");
+  }
 });
+
 document.addEventListener("dragleave",function(e){
   var c=e.target.closest(".tk");
-  if(c)c.classList.remove("over");
+  if(c){
+    c.classList.remove("over", "over-top", "over-bottom");
+  }
 });
+
 document.addEventListener("drop",function(e){
   var c=e.target.closest(".tk");
   if(!c||!c.dataset.id||+c.dataset.id===dragId)return;
   e.preventDefault();
-  c.classList.remove("over");
+
+  var r=c.getBoundingClientRect();
+  var isAfter=(e.clientY-r.top)/r.height>.5;
+
+  document.querySelectorAll(".tk.dragging, .tk.over, .tk.over-top, .tk.over-bottom").forEach(function(x){
+    x.classList.remove("dragging", "over", "over-top", "over-bottom");
+  });
+
   var over=+c.dataset.id;
   var from=tasks.findIndex(function(t){return t.id===dragId});
   var to=tasks.findIndex(function(t){return t.id===over});
   if(from<0||to<0)return;
-  var r=c.getBoundingClientRect();
-  var after=(e.clientY-r.top)/r.height>.5;
+
   var moved=tasks.splice(from,1)[0];
   var idx=tasks.findIndex(function(t){return t.id===over});
-  tasks.splice(after?idx+1:idx,0,moved);
-  renderPlan();
-  var nc=document.querySelector('.tk[data-id="'+dragId+'"]');
-  if(nc)nc.classList.add("dragging");
+  var insertIdx=isAfter?idx+1:idx;
+  tasks.splice(insertIdx,0,moved);
+
+  refresh();
+
+  var curId = dragId;
+  dragId = null;
+
+  setTimeout(function(){
+    var nc=document.querySelector('.tk[data-id="'+curId+'"]');
+    if(nc){
+      nc.classList.add("just-moved");
+      setTimeout(function(){nc.classList.remove("just-moved");},1200);
+    }
+  },50);
+
+  var taskName = moved.n ? (moved.n.length > 28 ? moved.n.substring(0, 28) + "..." : moved.n) : "công việc";
+  var newStep = tasks.indexOf(moved) + 1;
+  showToast("✓ Đã chuyển sang bước " + newStep + ": " + taskName, 2200);
 });
 
 /* ---------- Notes Data Extraction & Counter ---------- */
