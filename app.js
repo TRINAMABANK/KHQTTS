@@ -51,6 +51,53 @@ var PHASE_MAP = {
   "Go-live & hỗ trợ": "Golive & hỗ trợ"
 };
 
+var STATUS_TO_PHASE = {
+  "Chưa bắt đầu": "Chuẩn bị",
+  "Đang làm": "Đang tiến hành",
+  "Hoàn thành": "TP/PP Thống nhất"
+};
+
+var PHASE_TO_STATUS = {
+  "Chuẩn bị": "Chưa bắt đầu",
+  "Đang tiến hành": "Đang làm",
+  "TP/PP Thống nhất": "Hoàn thành"
+};
+
+function getTaskPhase(t){
+  if(t.stt === "Chưa bắt đầu") return "Chuẩn bị";
+  if(t.stt === "Đang làm") return "Đang tiến hành";
+  if(t.stt === "Hoàn thành"){
+    if(!t.ph || t.ph === "Chuẩn bị" || t.ph === "Đang tiến hành" || t.ph === "TP/PP Thống nhất"){
+      return "TP/PP Thống nhất";
+    }
+    return t.ph;
+  }
+  if(t.ph === "Chuẩn bị") return "Chuẩn bị";
+  if(t.ph === "Đang tiến hành") return "Đang tiến hành";
+  if(t.ph === "TP/PP Thống nhất") return "TP/PP Thống nhất";
+  return t.ph || "Chuẩn bị";
+}
+
+function syncTaskPhaseAndStatus(t, changedField, newVal){
+  if(changedField === "ph"){
+    t.ph = newVal;
+    if(PHASE_TO_STATUS[newVal]){
+      t.stt = PHASE_TO_STATUS[newVal];
+    }
+  } else if(changedField === "stt"){
+    t.stt = newVal;
+    if(newVal === "Chưa bắt đầu"){
+      t.ph = "Chuẩn bị";
+    } else if(newVal === "Đang làm"){
+      t.ph = "Đang tiến hành";
+    } else if(newVal === "Hoàn thành"){
+      if(!t.ph || t.ph === "Chuẩn bị" || t.ph === "Đang tiến hành" || t.ph === "TP/PP Thống nhất"){
+        t.ph = "TP/PP Thống nhất";
+      }
+    }
+  }
+}
+
 var SIDE_MAP = {
   "Hai bên": "BP QTTS",
   "Đơn vị phối hợp": "Đối tác"
@@ -67,17 +114,17 @@ var DEPT_MAP = {
 
 var SEED=[
   ["Chuẩn bị","Họp khởi động: thống nhất phạm vi và kế hoạch triển khai","TP HCQT/PP HCQT","Phòng HCQT",1,
-   "2026-09-16","2026-09-16","Hoàn thành","Hình thức: họp trực tiếp"],
+   "2026-09-16","2026-09-16","Chưa bắt đầu","Hình thức: họp trực tiếp"],
   ["Đang tiến hành","Gửi biên bản kết luận sau buổi họp","QTTS - Văn Bé","—",0,
-   "2026-09-17","2026-09-17","Hoàn thành","Đã gửi các bên liên quan"],
+   "2026-09-17","2026-09-17","Đang làm","Đã gửi các bên liên quan"],
   ["Đang tiến hành","Rà soát dữ liệu cấu hình và danh mục tài sản/người dùng","QTTS - Vân Sinh","BP QTTS",1,
    "2026-09-18","2026-09-20","Đang làm","Rà soát theo mẫu biểu chuẩn"],
   ["Đang tiến hành","Cấu hình và kiểm thử hệ thống phần mềm","QTTS - Quang Trí","CNTT",1,
-   "2026-09-21","2026-09-24","Chưa bắt đầu","Thực hiện trên môi trường thử nghiệm"],
+   "2026-09-21","2026-09-24","Đang làm","Thực hiện trên môi trường thử nghiệm"],
   ["TP/PP Thống nhất","Họp rà soát và thống nhất phương án cấp Trưởng/Phó phòng","TP HCQT/PP HCQT","Phòng HCQT",1,
-   "2026-09-25","2026-09-26","Chưa bắt đầu","TP/PP các đơn vị tham gia rà soát"],
+   "2026-09-25","2026-09-26","Hoàn thành","TP/PP các đơn vị tham gia rà soát"],
   ["TP/PP Thống nhất","Hoàn thiện các nội dung thống nhất và biên bản làm việc","QTTS - Anh Vân","Phòng Kế Toán",0,
-   "2026-09-26","2026-09-27","Chưa bắt đầu","Chốt các phương án xử lý phát sinh"],
+   "2026-09-26","2026-09-27","Hoàn thành","Chốt các phương án xử lý phát sinh"],
   ["Đang trình ký BLĐ","Lập tờ trình và gửi hồ sơ trình ký Ban Lãnh Đạo","BP QTTS","BLĐ",1,
    "2026-09-27","2026-09-28","Chưa bắt đầu","Trình phê duyệt kế hoạch triển khai"],
   ["Đã Phê duyệt","Tiếp nhận phê duyệt của BLĐ và thông báo các đơn vị","BP QTTS","Phòng PLTT",1,
@@ -344,7 +391,11 @@ function taskCard(t,compact){
     r1.appendChild(el("span",{class:"pill p-ph"},t.ph));
   }else{
     r1.appendChild(el("span",{class:"tk-no",title:"Bước "+(tasks.indexOf(t)+1)},t.stt==="Hoàn thành"?"✓":String(tasks.indexOf(t)+1)));
-    r1.appendChild(pillSel(PHASES,t.ph,"p-ph",function(v){t.ph=v;refresh()}));
+    r1.appendChild(pillSel(PHASES,t.ph,"p-ph",function(v){
+      syncTaskPhaseAndStatus(t,"ph",v);
+      autoSave();
+      refresh();
+    }));
   }
   var nm=el("div",{class:"tk-name"});
   if(compact){
@@ -433,7 +484,11 @@ function stSel(t){
   var s=el("select",{class:"stt "+stClass(t.stt)});
   ST.forEach(function(o){var p=el("option",null,o);p.value=o;s.appendChild(p)});
   s.value=t.stt;
-  s.onchange=function(){t.stt=s.value;refresh()};
+  s.onchange=function(){
+    syncTaskPhaseAndStatus(t,"stt",s.value);
+    autoSave();
+    refresh();
+  };
   return s;
 }
 
@@ -1212,7 +1267,7 @@ function whenText(t){
 }
 
 function phaseDateText(p,pIdx){
-  var inPhase=tasks.filter(function(t){return t.ph===p});
+  var inPhase=tasks.filter(function(t){return getTaskPhase(t)===p});
   if(!inPhase.length)return "—";
   var sts=[],dues=[];
   inPhase.forEach(function(t){
@@ -1227,7 +1282,7 @@ function phaseDateText(p,pIdx){
 
   var cur=null;
   for(var i=0;i<PHASES.length;i++){
-    var ps=tasks.filter(function(t){return t.ph===PHASES[i]});
+    var ps=tasks.filter(function(t){return getTaskPhase(t)===PHASES[i]});
     if(ps.length&&ps.some(function(t){return t.stt!=="Hoàn thành"})){
       cur=PHASES[i];
       break;
@@ -1266,7 +1321,7 @@ function renderFlow(){
   // Stepper chevrons across top
   var curPhase=null;
   for(var i=0;i<PHASES.length;i++){
-    var ps=tasks.filter(function(t){return t.ph===PHASES[i]});
+    var ps=tasks.filter(function(t){return getTaskPhase(t)===PHASES[i]});
     if(ps.length&&ps.some(function(t){return t.stt!=="Hoàn thành"})){
       curPhase=PHASES[i];
       break;
@@ -1286,6 +1341,13 @@ function renderFlow(){
     var tDiv=el("div",{class:"t"});
     tDiv.appendChild(el("span",{class:"no"},String(idx+1)));
     tDiv.appendChild(el("span",null,p));
+    if(p === "Chuẩn bị"){
+      tDiv.appendChild(el("span",{class:"fl-sub-stt"},"(Chưa bắt đầu)"));
+    } else if(p === "Đang tiến hành"){
+      tDiv.appendChild(el("span",{class:"fl-sub-stt"},"(Đang làm)"));
+    } else if(p === "TP/PP Thống nhất"){
+      tDiv.appendChild(el("span",{class:"fl-sub-stt"},"(Hoàn thành)"));
+    }
     phDiv.appendChild(tDiv);
 
     phDiv.appendChild(el("div",{class:"d"},phaseDateText(p,idx)));
@@ -1322,8 +1384,37 @@ function renderFlow(){
 
     PHASES.forEach(function(p){
       var cell=el("div",{class:"fl-cell "+m.c+(isDim?" dim":"")});
-      var inPhase=tasks.filter(function(t){return t.ph===p&&laneOf(t)===k});
+      cell.dataset.lane = k;
+      cell.dataset.phase = p;
+      var inPhase=tasks.filter(function(t){return getTaskPhase(t)===p&&laneOf(t)===k});
       inPhase.forEach(function(t){cell.appendChild(flowNode(t))});
+
+      if(isAdmin){
+        cell.ondragover = function(e){
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+          cell.classList.add("fl-cell-over");
+        };
+        cell.ondragleave = function(e){
+          cell.classList.remove("fl-cell-over");
+        };
+        cell.ondrop = function(e){
+          cell.classList.remove("fl-cell-over");
+          e.preventDefault();
+          var data = e.dataTransfer.getData("text/plain");
+          if(data && data.indexOf("flow:") === 0){
+            var tid = +data.slice(5);
+            var targetTask = tasks.filter(function(x){return x.id === tid})[0];
+            if(targetTask){
+              syncTaskPhaseAndStatus(targetTask, "ph", p);
+              autoSave();
+              refresh();
+              showToast("Đã chuyển công việc sang: " + p + (targetTask.stt ? " (" + targetTask.stt + ")" : ""));
+            }
+          }
+        };
+      }
+
       grid.appendChild(cell);
     });
   });
@@ -1388,6 +1479,15 @@ function flowNode(t){
     tabindex:"0",
     role:"button"
   });
+
+  if(isAdmin){
+    nd.draggable = true;
+    nd.dataset.id = t.id;
+    nd.ondragstart = function(e){
+      e.dataTransfer.setData("text/plain", "flow:" + t.id);
+      e.dataTransfer.effectAllowed = "move";
+    };
+  }
 
   var r=el("div",{class:"r"});
   var n=el("span",{class:"fl-n"},done?"✓":String(stNo(t)));
@@ -1517,9 +1617,11 @@ var addBtn=$("#addTask");
 if(addBtn){
   addBtn.onclick=function(){
     var todayStr = iso(today());
+    var initPh = filt || PHASES[0];
+    var initStt = PHASE_TO_STATUS[initPh] || ST[0];
     var newTask = {
       id: ++uid,
-      ph: filt || PHASES[0],
+      ph: initPh,
       n: "",
       side: SIDES[0],
       dept: DEPTS[0],
@@ -1527,7 +1629,7 @@ if(addBtn){
       pic: "",
       st: todayStr,
       due: todayStr,
-      stt: ST[0],
+      stt: initStt,
       note: ""
     };
     tasks.push(newTask);
@@ -1789,6 +1891,14 @@ function applyState(o){
       if(DEPT_MAP[t.dept]) t.dept = DEPT_MAP[t.dept];
       if(SIDES.indexOf(t.side) < 0) t.side = SIDES[0];
       if(DEPTS.indexOf(t.dept) < 0) t.dept = DEPTS[0];
+      // Normalize task mapping if out of sync
+      if(t.stt === "Chưa bắt đầu" && (t.ph === "Đang tiến hành" || t.ph === "TP/PP Thống nhất")){
+        t.ph = "Chuẩn bị";
+      } else if(t.stt === "Đang làm" && (t.ph === "Chuẩn bị" || t.ph === "TP/PP Thống nhất")){
+        t.ph = "Đang tiến hành";
+      } else if(t.stt === "Hoàn thành" && (t.ph === "Chuẩn bị" || t.ph === "Đang tiến hành")){
+        t.ph = "TP/PP Thống nhất";
+      }
       return t;
     });
     uid=o.uid||tasks.length;
